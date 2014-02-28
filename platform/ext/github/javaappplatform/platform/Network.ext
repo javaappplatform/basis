@@ -1,0 +1,151 @@
+/*
+	This file is part of the d3fact platform library.
+	Copyright (C) 2011-2012 Hendrik Renken
+
+	This library is subject to the terms of the Mozilla Public License, v. 2.0.
+	You should have received a copy of the MPL along with this library; see the
+	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+{
+
+	"github.javaappplatform.platform.resource.server.ServerFileSystem" :
+	{
+		"point" : [ "github.javaappplatform.platform.ResourceSystem" ],
+		"class" : "github.javaappplatform.platform.resource.server.ServerFileSystem",
+		"scheme" : [ "file", "ws", "dav", "davs", "http", "https" ],
+		"singleton" : true
+	},
+
+	"github.javaappplatform.platform.network.BootEntry" :
+	{
+		"point" : "github.javaappplatform.platform.boot",
+		"class" : "github.javaappplatform.platform.network.BootEntry",
+		"requirements" : [ "github.javaappplatform.platform.boot.Platform" ],
+		"singleton" : true
+	},
+
+	"github.javaappplatform.platform.network.clientID" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "clientID",
+		"description" : "The clientID this platform should use to register at the server. The clientID must be reserved previously at the server.",
+		"isRequired" : false,
+		"ArgName" : "id",
+		"numOfArgs" : 1
+	},
+
+	"github.javaappplatform.platform.network.host" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "host",
+		"description" : "The host (server) address to which this client should connect. Can be an IP address or well known name.",
+		"isRequired" : true,
+		"ArgName" : "hostname",
+		"numOfArgs" : 1
+	},
+
+	"github.javaappplatform.platform.network.tcp" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "hostTCP",
+		"description" : "The tcp port used by the server (to which this client should connect).",
+		"isRequired" : true,
+		"ArgName" : "TCP-Port",
+		"numOfArgs" : 1
+	},
+
+	"github.javaappplatform.platform.network.udp" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "hostUDP",
+		"description" : "The udp port used by the server (to which this client should connect).",
+		"isRequired" : true,
+		"ArgName" : "UDP-Port",
+		"numOfArgs" : 1
+	},
+
+	"github.javaappplatform.platform.network.cache" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "networkfileandwscache",
+		"description" : "boolean-flag indicating whether or not resources from servers filesystem (file:, ws:) should be cached by the simulation client.",
+		"isRequired" : false,
+		"numOfArgs" : 0
+	},
+
+	"github.javaappplatform.platform.network.portrange" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "portrange",
+		"description" : "An interval of the format: '<lowerport>..<higherport>'. Use this to control the port usage of the network part, e.g. to meet specific firewall rules, etc.",
+		"isRequired" : false,
+		"ArgName" : "range",
+		"numOfArgs" : 1
+	},
+
+	"github.javaappplatform.platform.network.shutdown" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "network_shutdown",
+		"description" : "boolean-flag indicating whether or not the platform should shutdown when the network is closed remotely.",
+		"isRequired" : false,
+		"numOfArgs" : 0
+	},
+
+	"github.javaappplatform.platform.network.interfaces.impl.Streaming" :
+	{
+		"point" : "github.javaappplatform.platform.network.Interface",
+		"class" : "github.javaappplatform.platform.network.interfaces.impl.StreamingInterface",
+		"msgtypes" : [ "200", "201", "202", "203" ],
+		"singleton" : false
+	},
+
+	"github.javaappplatform.platform.network.interfaces.impl.PingInterface" :
+	{
+		"point" : "github.javaappplatform.platform.network.Interface",
+		"class" : "github.javaappplatform.platform.network.interfaces.impl.PingInterface",
+		"msgtypes" : [ "1", "2" ],
+		"singleton" : false
+	},
+
+	"github.javaappplatform.platform.network.alias" :
+	{
+		"point" : "github.javaappplatform.platform.logging.Alias",
+		"package" : "github.javaappplatform.platform.network",
+		"substitute" : "+[NET]"
+	},
+
+	"github.javaappplatform.platform.network.interfaces.impl.PoolInterface" :
+	{
+		"point" : "github.javaappplatform.platform.network.Interface",
+		"class" : "github.javaappplatform.platform.network.interfaces.PlatformPoolInterface",
+		"msgtypes" : [ "2110", "2111", "2120", "2122", "2125", "2127" ],
+		"singleton" : false
+	},
+
+	"github.javaappplatform.platform.network.interfaces.PlatformResourceInterface" :
+	{
+		"point" : "github.javaappplatform.platform.network.Interface",
+		"class" : "github.javaappplatform.platform.network.interfaces.PlatformResourceInterface",
+		"msgtypes" : [ "2010", "2020", "2050", "2060", "2070", "2080", "2090" ],
+		"singleton" : false
+	},
+
+	"github.javaappplatform.platform.network.SyncedTime" :
+	{
+		"point" : [ "github.javaappplatform.platform.network.SyncedTime" ],
+		"class" : "github.javaappplatform.platform.network.SyncedTime",
+		"singleton" : true
+	},
+
+	"github.javaappplatform.platform.network.console.StatusCommand" :
+	{
+		"point" : "github.javaappplatform.platform.console.Command",
+		"class" : "github.javaappplatform.platform.network.console.StatusCommand",
+		"singleton" : true,
+		"command" : "netstate",
+		"sync" : false,
+		"description" : "Usage: 'netstate (full)?. Displays some useful and not so useful information about the network system."
+	}
+
+}

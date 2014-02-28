@@ -1,0 +1,134 @@
+/*
+	This file is part of the javaappplatform library.
+	Copyright (C) 2011-2013 Hendrik Renken
+
+	This library is subject to the terms of the Mozilla Public License, v. 2.0.
+	You should have received a copy of the MPL along with this library; see the
+	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+package github.javaappplatform.platform.extension;
+
+import github.javaappplatform.commons.collection.SmallMap;
+import github.javaappplatform.commons.log.Logger;
+import github.javaappplatform.commons.util.Arrays2;
+import github.javaappplatform.commons.util.GenericsToolkit;
+
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * TODO javadoc
+ * @author funsheep
+ */
+public class Extension
+{
+
+	private static final Logger LOGGER = Logger.getLogger();
+
+
+	public final String name;
+	public final String[] points;
+	private Class<?> clazz;
+	private Object service;
+
+	protected final SmallMap<String, Object> properties;
+
+
+	protected Extension(String name, Map<String, Object> properties)
+	{
+		this.name = name;
+		final Object point = properties.get("point");
+		if (point instanceof String)
+		{
+			this.points = new String[1];
+			this.points[0] = (String) point;
+		}
+		else
+			this.points = (String[]) point;
+
+		this.properties = new SmallMap<String, Object>(properties);
+		this.properties.remove("point");
+		if (this.properties.containsKey("extname"))
+			LOGGER.info("Extension " + this.name + " has a property called 'extname'. 'extname' is a reserved word. It will be overwritten with the name of the extension.");
+		this.properties.put("extname", this.name);
+	}
+
+	protected Extension(String name, Object service, Map<String, Object> properties)
+	{
+		this(name, properties);
+		this.service = service;
+	}
+
+
+	public boolean extens(String point)
+	{
+		return Arrays2.contains(this.points, point);
+	}
+
+	public <O extends Object> O getProperty(String key)
+	{
+		return GenericsToolkit.<O>convertUnchecked(this.properties.get(key));
+	}
+
+	public boolean hasProperty(String key)
+	{
+		return this.properties.containsKey(key);
+	}
+
+	public Set<Map.Entry<String, Object>> getProperties()
+	{
+		return this.properties.entrySet();
+	}
+
+	public <O extends Object> O getService() throws ServiceInstantiationException
+	{
+		if (this.clazz == null)
+		{
+			final Class<?> clazzprop = this.getProperty("class");
+			if (clazzprop == null)
+				throw new IllegalStateException("This extension "+this.name+" does not provide a service object. The 'class' property is missing.");
+			this.clazz = clazzprop;
+		}
+		final Boolean singleton = this.getProperty("singleton");
+		if (singleton != null && singleton.booleanValue())
+		{
+			if (this.service == null)
+				try
+				{
+					this.service = this.clazz.newInstance();
+					if (this.service instanceof IService)
+						((IService) this.service).init(this);
+				} catch (InstantiationException e)
+				{
+					throw new ServiceInstantiationException("Could not instanciate requested service.", e);
+				} catch (IllegalAccessException e)
+				{
+					throw new ServiceInstantiationException("Could not instanciate requested service.", e);
+				}
+			return GenericsToolkit.<O>convertUnchecked(this.service);
+		}
+		try
+		{
+			final Object o = this.clazz.newInstance();
+			if (o instanceof IService)
+				((IService) o).init(this);
+			return GenericsToolkit.<O>convertUnchecked(o);
+		} catch (InstantiationException e)
+		{
+			throw new ServiceInstantiationException("Could not instanciate requested service.", e);
+		} catch (IllegalAccessException e)
+		{
+			throw new ServiceInstantiationException("Could not instanciate requested service.", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString()
+	{
+		return this.name;
+	}
+
+}

@@ -10,8 +10,14 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>github.javaappplatform.eclipse.project.builder.JSONCheckBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>github.javaappplatform.eclipse.project.builder.Nature</nature>
 	</natures>
 </projectDescription>

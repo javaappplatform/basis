@@ -1,0 +1,82 @@
+/*
+	This file is part of the java application platform library.
+	Copyright (C) 2011-2012 Hendrik Renken
+
+	This library is subject to the terms of the Mozilla Public License, v. 2.0.
+	You should have received a copy of the MPL along with this library; see the
+	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+{
+
+	"github.javaappplatform.platform.commons.platform.option.extensions" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "extensions",
+		"description" : "A ':' separated list of extension names, that should be loaded at the beginning.",
+		"isRequired" : false,
+		"ArgName" : "list",
+		"ArgsSeparator" : ":",
+		"numOfArgs" : "inf"
+	},
+
+/*	"github.javaappplatform.platform.commons.platform.option.configfile" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "config",
+		"description" : "A file from which to load a configuration. If this option is set, everything else on the command line is ignored.",
+		"isRequired" : false,
+		"ArgName" : "file",
+		"numOfArgs" : 1
+	},*/
+
+	"github.javaappplatform.platform.commons.platform.loglevel" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "loglevel",
+		"description" : "Sets the level for which debugging messages will be printed out. One of [ NONE, ERROR, WARNING, INFO, FINE, FINEST ]. If not present, WARNING is assumed as level.",
+		"isRequired" : false,
+		"ArgName" : "lvl",
+		"numOfArgs" : 1
+	},
+
+	"github.javaappplatform.platform.commons.platform.logfile" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "logfile",
+		"description" : "Sets the path of the debugfile. The path can be described using the notation of the java.util.logging package. If this option is not present, logging is done to the console.",
+		"isRequired" : false,
+		"ArgName" : "file",
+		"numOfArgs" : 1
+	},
+
+	"github.javaappplatform.platform.commons.platform.option.help" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "help",
+		"description" : "Shows this help.",
+		"isRequired" : false,
+		"numOfArgs" : 0
+	},
+
+	"github.javaappplatform.platform.boot.Platform" :
+	{
+		"point" : "github.javaappplatform.platform.boot",
+		"class" : "github.javaappplatform.platform.PlatformBootEntry",
+		"singleton" : true
+	},
+
+	"github.javaappplatform.platform.alias" :
+	{
+		"point" : "github.javaappplatform.platform.logging.Alias",
+		"package" : "github.javaappplatform.platform",
+		"substitute" : "[d3f]"
+	},
+
+	"github.javaappplatform.platform.alias" :
+	{
+		"point" : "github.javaappplatform.platform.logging.Alias",
+		"package" : "github.javaappplatform.platform",
+		"substitute" : "*[d3P]"
+	}
+
+}

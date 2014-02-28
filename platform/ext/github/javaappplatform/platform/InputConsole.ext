@@ -1,5 +1,5 @@
 /*
-	This file is part of the d3fact platform library.
+	This file is part of the java application platform library.
 	Copyright (C) 2011-2012 Hendrik Renken
 
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -64,56 +64,6 @@
 		"command" : "extensions",
 		"sync" : false,
 		"description" : "Shows all registered extensions."
-	},
-
-	"github.javaappplatform.platform.resource.console.LSCommand" :
-	{
-		"point" : "github.javaappplatform.platform.console.Command",
-		"class" : "github.javaappplatform.platform.resource.console.LSCommand",
-		"singleton" : true,
-		"command" : "ls",
-		"sync" : false,
-		"description" : "Shows information to the given URI. 'ls (rl) <URI>'. 'r' for recursive and 'l' for long format."
-	},
-
-	"github.javaappplatform.platform.resource.console.CATCommand" :
-	{
-		"point" : "github.javaappplatform.platform.console.Command",
-		"class" : "github.javaappplatform.platform.resource.console.CATCommand",
-		"singleton" : true,
-		"command" : "cat",
-		"sync" : false,
-		"description" : "Displays the content of the given URI as text. 'cat (#lines) <URI>'."
-	},
-
-	"github.javaappplatform.platform.resource.console.MKDirCommand" :
-	{
-		"point" : "github.javaappplatform.platform.console.Command",
-		"class" : "github.javaappplatform.platform.resource.console.MKDirCommand",
-		"singleton" : true,
-		"command" : "mkdir",
-		"sync" : false,
-		"description" : "Creates the directory at the given URI. 'mkdir <URI>'."
-	},
-
-	"github.javaappplatform.platform.resource.console.RMCommand" :
-	{
-		"point" : "github.javaappplatform.platform.console.Command",
-		"class" : "github.javaappplatform.platform.resource.console.RMCommand",
-		"singleton" : true,
-		"command" : "rm",
-		"sync" : false,
-		"description" : "Deletes the directory or resource at the given URI. 'rm <URI>'."
-	},
-
-	"github.javaappplatform.platform.resource.console.WriteCommand" :
-	{
-		"point" : "github.javaappplatform.platform.console.Command",
-		"class" : "github.javaappplatform.platform.resource.console.WriteCommand",
-		"singleton" : true,
-		"command" : "write",
-		"sync" : false,
-		"description" : "Write the given content into a file (UTF-8). Usage: write <URI> (CREATE_IN_ANY_CASE|CREATE_ONLY_WHEN_NEW|APPEND_TO_RESOURCE|BLOCK_CALL|DELETE_ON_CLOSE|DELETE_ON_FAIL|TRY_TO_OPEN)* <content>."
 	}
 
 }

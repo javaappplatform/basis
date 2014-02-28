@@ -18,7 +18,7 @@ import github.javaappplatform.platform.extension.ExtensionLoader;
 import github.javaappplatform.platform.extension.ExtensionRegistry;
 import github.javaappplatform.platform.extension.ServiceInstantiationException;
 import github.javaappplatform.platform.job.JobPlatform;
-import github.javaappplatform.platform.network.SyncedTime;
+import github.javaappplatform.platform.time.ITimeService;
 import github.javaappplatform.platform.utils.CmdLineTools;
 import github.javaappplatform.platform.utils.ConfigFileTools;
 import github.javaappplatform.platform.utils.OptionTools;
@@ -136,12 +136,12 @@ public class Platform
 
 	public static final long currentTime()
 	{
-		Extension e = ExtensionRegistry.getExtension(SyncedTime.EXT_POINT);
+		Extension e = ExtensionRegistry.getExtension(ITimeService.EXT_POINT);
 		if (e == null)
 			return System.currentTimeMillis();
 		try
 		{
-			return e.<SyncedTime>getService().syncedTimeMillis();
+			return e.<ITimeService>getService().currentTime();
 		} catch (ServiceInstantiationException ex)
 		{
 			throw new RuntimeException(ex);

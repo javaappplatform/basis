@@ -10,7 +10,6 @@ package github.javaappplatform.platform.extension;
 
 import github.javaappplatform.commons.collection.SmallMap;
 import github.javaappplatform.commons.collection.SmallSet;
-import github.javaappplatform.commons.events.Event;
 import github.javaappplatform.commons.events.IListener;
 import github.javaappplatform.commons.events.TalkerStub;
 import github.javaappplatform.commons.log.Logger;
@@ -24,78 +23,79 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * TODO javadoc
+ * FIXME move servicegroup and extensiongroup mechanism into helper classes when needed
  * @author funsheep
  */
 public class ExtensionRegistry
 {
 
-	private static final class ExtGroup implements IListener
-	{
-		public final String point;
-		public final Pattern search;
-		public final SmallSet<Extension> set;
+//	private static final class ExtGroup implements IListener
+//	{
+//		public final String point;
+//		public final Pattern search;
+//		public final SmallSet<Extension> set;
+//
+//		public ExtGroup(String point, Pattern searchPattern, Set<Extension> set)
+//		{
+//			this.point = point;
+//			this.search = searchPattern;
+//			this.set = new SmallSet<Extension>(set);
+//			ExtensionRegistry.addListener(this);
+//		}
+//
+//		/**
+//		 * {@inheritDoc}
+//		 */
+//		@Override
+//		public void handleEvent(Event e)
+//		{
+//			Extension ext = e.getData();
+//			if (!ext.extens(this.point) || !matches(ext, this.search))
+//				return;
+//			if (e.type() == EVENT_EXTENSION_REGISTERED)
+//				this.set.add(ext);
+//			else
+//				this.set.remove(ext);
+//		}
+//	}
 
-		public ExtGroup(String point, Pattern searchPattern, Set<Extension> set)
-		{
-			this.point = point;
-			this.search = searchPattern;
-			this.set = new SmallSet<Extension>(set);
-			ExtensionRegistry.addListener(this);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void handleEvent(Event e)
-		{
-			Extension ext = e.getData();
-			if (!ext.extens(this.point) || !matches(ext, this.search))
-				return;
-			if (e.type() == EVENT_EXTENSION_REGISTERED)
-				this.set.add(ext);
-			else
-				this.set.remove(ext);
-		}
-	}
-
-	private static final class ServiceGroup implements IListener
-	{
-		public final String point;
-		public final Pattern search;
-		public final SmallSet<Object> set;
-
-		public ServiceGroup(String point, Pattern searchPattern, Set<Object> set)
-		{
-			this.point = point;
-			this.search = searchPattern;
-			this.set = new SmallSet<Object>(set);
-			ExtensionRegistry.addListener(this);
-		}
-
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void handleEvent(Event e)
-		{
-			Extension ext = e.getData();
-			if (!ext.extens(this.point) || !matches(ext, this.search))
-				return;
-
-			try
-			{
-				if (e.type() == EVENT_EXTENSION_REGISTERED)
-					this.set.add(ext.getService());
-				else
-					this.set.remove(ext.getService());
-			} catch (ServiceInstantiationException e1)
-			{
-				LOGGER.warn("Could not get service from extension " + ext.name, e1);
-			}
-		}
-	}
+//	private static final class ServiceGroup implements IListener
+//	{
+//		public final String point;
+//		public final Pattern search;
+//		public final SmallSet<Object> set;
+//
+//		public ServiceGroup(String point, Pattern searchPattern, Set<Object> set)
+//		{
+//			this.point = point;
+//			this.search = searchPattern;
+//			this.set = new SmallSet<Object>(set);
+//			ExtensionRegistry.addListener(this);
+//		}
+//
+//
+//		/**
+//		 * {@inheritDoc}
+//		 */
+//		@Override
+//		public void handleEvent(Event e)
+//		{
+//			Extension ext = e.getData();
+//			if (!ext.extens(this.point) || !matches(ext, this.search))
+//				return;
+//
+//			try
+//			{
+//				if (e.type() == EVENT_EXTENSION_REGISTERED)
+//					this.set.add(ext.getService());
+//				else
+//					this.set.remove(ext.getService());
+//			} catch (ServiceInstantiationException e1)
+//			{
+//				LOGGER.warn("Could not get service from extension " + ext.name, e1);
+//			}
+//		}
+//	}
 
 
 	private static final Logger LOGGER = Logger.getLogger();
@@ -111,8 +111,8 @@ public class ExtensionRegistry
 
 	private static final HashMap<String, Extension> EXTS_BY_NAME = new HashMap<String, Extension>();
 	private static final HashMap<String, SmallSet<Extension>> EXTS_BY_POINT = new HashMap<String, SmallSet<Extension>>();
-	private static final SmallSet<ExtGroup> EXTSGROUPS = new SmallSet<ExtensionRegistry.ExtGroup>(1);
-	private static final SmallSet<ServiceGroup> SERVICESGROUP = new SmallSet<ServiceGroup>(1);
+//	private static final SmallSet<ExtGroup> EXTSGROUPS = new SmallSet<ExtensionRegistry.ExtGroup>(1);
+//	private static final SmallSet<ServiceGroup> SERVICESGROUP = new SmallSet<ServiceGroup>(1);
 
 
 	public static final Extension registerExtension(String name, String point, Map<String, Object> properties)
@@ -169,17 +169,17 @@ public class ExtensionRegistry
 		}
 	}
 
-	public static final Object getService(String point)
+	public static final <O> O getService(String point)
 	{
-		return getService(point, (Pattern) null);
+		return ExtensionRegistry.<O>getService(point, (Pattern) null);
 	}
 
-	public static final Object getService(String point, String searchPattern)
+	public static final <O> O getService(String point, String searchPattern)
 	{
 		return getService(point, new Pattern(searchPattern));
 	}
 
-	public static final Object getService(String point, Pattern searchPattern)
+	public static final <O> O getService(String point, Pattern searchPattern)
 	{
 		Extension e = getExtension(point, searchPattern);
 		if (e != null)
@@ -193,48 +193,48 @@ public class ExtensionRegistry
 		return null;
 	}
 
-	public static final Set<Object> getServices(String point)
+	public static final <E> Set<E> getServices(String point)
 	{
 		return getServices(point, null, false);
 	}
 
-	public static final Set<Object> getServices(String point, String searchPattern)
+	public static final <E> Set<E> getServices(String point, String searchPattern)
 	{
 		return getServices(point, new Pattern(searchPattern), false);
 	}
 
-	public static final Set<Object> getServices(String point, Pattern searchPattern, boolean persistent)
+	private static final <E> Set<E> getServices(String point, Pattern searchPattern, boolean persistent)
 	{
-		ServiceGroup g = findServices(point, searchPattern);
-		if (g != null)
-			return Collections.<Object>unmodifiableSet(g.set);
+//		ServiceGroup g = findServices(point, searchPattern);
+//		if (g != null)
+//			return Collections.<Object>unmodifiableSet(g.set);
 
 		final Set<Extension> set = getExtensions(point, searchPattern, false);
 		if (set.isEmpty())
-			return Collections.<Object>emptySet();
-		final SmallSet<Object> ret = new SmallSet<Object>(set.size());
+			return Collections.<E>emptySet();
+		final SmallSet<E> ret = new SmallSet<>(set.size());
 		for (Extension e : set)
 			try
 			{
-				ret.add(e.getService());
+				ret.add(e.<E>getService());
 			} catch (ServiceInstantiationException e1)
 			{
 				LOGGER.warn("Could not get service from extension " + e.name, e1);
 			}
 
-		if (persistent && ret.size() > 0)
-		{
-			EXTREG_LOCK.lock();
-			try
-			{
-				g = new ServiceGroup(point, searchPattern, ret);
-				SERVICESGROUP.add(g);
-			}
-			finally
-			{
-				EXTREG_LOCK.unlock();
-			}
-		}
+//		if (persistent && ret.size() > 0)
+//		{
+//			EXTREG_LOCK.lock();
+//			try
+//			{
+//				g = new ServiceGroup(point, searchPattern, ret);
+//				SERVICESGROUP.add(g);
+//			}
+//			finally
+//			{
+//				EXTREG_LOCK.unlock();
+//			}
+//		}
 
 		return ret;
 	}
@@ -282,7 +282,7 @@ public class ExtensionRegistry
 		}
 	}
 
-	public static final Set<Extension> getExtensions()
+	public static final Set<Extension> getAllExtensions()
 	{
 		EXTREG_LOCK.lock();
 		try
@@ -307,14 +307,14 @@ public class ExtensionRegistry
 		return getExtensions(point, new Pattern(searchPattern), false);
 	}
 
-	public static final Set<Extension> getExtensions(String point, Pattern searchPattern, boolean persistent)
+	private static final Set<Extension> getExtensions(String point, Pattern searchPattern, boolean persistent)
 	{
 		EXTREG_LOCK.lock();
 		try
 		{
-			ExtGroup g = findExtensions(point, searchPattern);
-			if (g != null)
-				return Collections.<Extension>unmodifiableSet(g.set);
+//			ExtGroup g = findExtensions(point, searchPattern);
+//			if (g != null)
+//				return Collections.<Extension>unmodifiableSet(g.set);
 
 			final Set<Extension> set = EXTS_BY_POINT.get(point);
 			if (set != null)
@@ -325,11 +325,11 @@ public class ExtensionRegistry
 					if (matches(e, searchPattern))
 						found.add(e);
 				}
-				if (persistent && found.size() > 0)
-				{
-					g = new ExtGroup(point, searchPattern, found);
-					EXTSGROUPS.add(g);
-				}
+//				if (persistent && found.size() > 0)
+//				{
+//					g = new ExtGroup(point, searchPattern, found);
+//					EXTSGROUPS.add(g);
+//				}
 
 				return found;
 			}
@@ -389,37 +389,37 @@ public class ExtensionRegistry
 	}
 
 
-	private static final ServiceGroup findServices(String point, Pattern searchPattern)
-	{
-		EXTREG_LOCK.lock();
-		try
-		{
-			for (ServiceGroup g : SERVICESGROUP)
-				if (g.point.equals(point) && (g.search == searchPattern || g.search.equals(searchPattern)))
-					return g;
-			return null;
-		}
-		finally
-		{
-			EXTREG_LOCK.unlock();
-		}
-	}
-
-	private static final ExtGroup findExtensions(String point, Pattern searchPattern)
-	{
-		EXTREG_LOCK.lock();
-		try
-		{
-			for (ExtGroup g : EXTSGROUPS)
-				if (g.point.equals(point) && (g.search == searchPattern || g.search.equals(searchPattern)))
-					return g;
-			return null;
-		}
-		finally
-		{
-			EXTREG_LOCK.unlock();
-		}
-	}
+//	private static final ServiceGroup findServices(String point, Pattern searchPattern)
+//	{
+//		EXTREG_LOCK.lock();
+//		try
+//		{
+//			for (ServiceGroup g : SERVICESGROUP)
+//				if (g.point.equals(point) && (g.search == searchPattern || g.search.equals(searchPattern)))
+//					return g;
+//			return null;
+//		}
+//		finally
+//		{
+//			EXTREG_LOCK.unlock();
+//		}
+//	}
+//
+//	private static final ExtGroup findExtensions(String point, Pattern searchPattern)
+//	{
+//		EXTREG_LOCK.lock();
+//		try
+//		{
+//			for (ExtGroup g : EXTSGROUPS)
+//				if (g.point.equals(point) && (g.search == searchPattern || g.search.equals(searchPattern)))
+//					return g;
+//			return null;
+//		}
+//		finally
+//		{
+//			EXTREG_LOCK.unlock();
+//		}
+//	}
 
 	public static final void addListener(IListener listener)
 	{

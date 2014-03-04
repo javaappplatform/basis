@@ -8,10 +8,10 @@
 */
 {
 
-	"github.javaappplatform.platform.LocalTime" :
+	"github.javaappplatform.platform.time.LocalTime" :
 	{
 		"point" : "github.javaappplatform.platform.time",
-		"class" : "github.javaappplatform.platform.LocalTime",
+		"class" : "github.javaappplatform.platform.time.LocalTime",
 		"singleton" : true
 	}
 

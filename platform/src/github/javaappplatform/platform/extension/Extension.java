@@ -70,6 +70,51 @@ public class Extension
 		return GenericsToolkit.<O>convertUnchecked(this.properties.get(key));
 	}
 
+	public <O extends Object> O getProperty(String key, O deFault)
+	{
+		if (!this.hasProperty(key))
+			return deFault;
+		return GenericsToolkit.<O>convertUnchecked(this.properties.get(key));
+	}
+
+	public int getProperty(String key, int deFault)
+	{
+		if (!this.hasProperty(key))
+			return deFault;
+		Object value = this.properties.get(key);
+		if (value instanceof Integer)
+			return ((Integer) value).intValue();
+		try
+		{
+			return Integer.parseInt(String.valueOf(this.<Object>getProperty(key)));
+		}
+		catch (Exception ex)
+		{
+			LOGGER.debug("Could not convert key " + key + " with value " +  this.getProperty(key) + " properly into an int.", ex);
+		}
+		return deFault;
+	}
+
+	public double getProperty(String key, double deFault)
+	{
+		if (!this.hasProperty(key))
+			return deFault;
+		Object value = this.properties.get(key);
+		if (value instanceof Integer)
+			return ((Integer) value).doubleValue();
+		else if (value instanceof Double)
+			return ((Double) value).doubleValue();
+		try
+		{
+			return Double.parseDouble(String.valueOf(this.<Object>getProperty(key)));
+		}
+		catch (Exception ex)
+		{
+			LOGGER.debug("Could not convert key " + key + " with value " +  this.getProperty(key) + " properly into a double.", ex);
+		}
+		return deFault;
+	}
+
 	public boolean hasProperty(String key)
 	{
 		return this.properties.containsKey(key);

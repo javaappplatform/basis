@@ -8,6 +8,8 @@
 */
 package github.javaappplatform.platform.job;
 
+import github.javaappplatform.commons.util.GenericsToolkit;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -85,7 +87,7 @@ public abstract class AComputeDoJob extends ADoJob implements IDoJob
 	}
 
 
-	public final Object get() throws Exception, InterruptedException
+	public final <O> O get() throws Exception
 	{
 		this.lock.lock();
 		try
@@ -110,7 +112,7 @@ public abstract class AComputeDoJob extends ADoJob implements IDoJob
 			}
 			if (this.error != null)
 				throw this.error;
-			return this.result;
+			return GenericsToolkit.<O>convertUnchecked(this.result);
 		}
 		finally
 		{

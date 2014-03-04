@@ -35,7 +35,7 @@ public class ExtensionCommand implements ICommand
 		else if (args.length == 1)
 			exts = ExtensionRegistry.getExtensions(args[0]);
 		else
-			exts = ExtensionRegistry.getExtensions();
+			exts = ExtensionRegistry.getAllExtensions();
 
 		String[] arr = new String[exts.size()];
 		int i = 0;

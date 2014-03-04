@@ -69,14 +69,7 @@
 	{
 		"point" : "github.javaappplatform.platform.logging.Alias",
 		"package" : "github.javaappplatform.platform",
-		"substitute" : "[d3f]"
-	},
-
-	"github.javaappplatform.platform.alias" :
-	{
-		"point" : "github.javaappplatform.platform.logging.Alias",
-		"package" : "github.javaappplatform.platform",
-		"substitute" : "*[d3P]"
+		"substitute" : "[jap]"
 	}
 
 }

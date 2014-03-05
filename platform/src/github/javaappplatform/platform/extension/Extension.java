@@ -48,9 +48,6 @@ public class Extension
 
 		this.properties = new SmallMap<String, Object>(properties);
 		this.properties.remove("point");
-		if (this.properties.containsKey("extname"))
-			LOGGER.info("Extension " + this.name + " has a property called 'extname'. 'extname' is a reserved word. It will be overwritten with the name of the extension.");
-		this.properties.put("extname", this.name);
 	}
 
 	protected Extension(String name, Object service, Map<String, Object> properties)
@@ -75,6 +72,24 @@ public class Extension
 		if (!this.hasProperty(key))
 			return deFault;
 		return GenericsToolkit.<O>convertUnchecked(this.properties.get(key));
+	}
+
+	public boolean getProperty(String key, boolean deFault)
+	{
+		if (!this.hasProperty(key))
+			return deFault;
+		Object value = this.properties.get(key);
+		if (value instanceof Boolean)
+			return ((Boolean) value).booleanValue();
+		try
+		{
+			return Boolean.parseBoolean(String.valueOf(this.<Object>getProperty(key)));
+		}
+		catch (Exception ex)
+		{
+			LOGGER.debug("Could not convert key " + key + " with value " +  this.getProperty(key) + " properly into a boolean value.", ex);
+		}
+		return deFault;
 	}
 
 	public int getProperty(String key, int deFault)

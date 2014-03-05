@@ -112,8 +112,6 @@ public class ExtensionLoader
 					{
 						if ("class".equals(propname))
 							propvalue = Class.forName((String) propvalue);
-						if ("api".equals(propname))
-							propvalue = Class.forName((String) propvalue);
 					}
 					catch (ClassNotFoundException e)
 					{
@@ -123,8 +121,6 @@ public class ExtensionLoader
 					{
 						throw new JsonParseException("Property "+propname+" in extension definition "+ extname +" in "+ name +" does not define required class name.", reader.getCurrentLocation());
 					}
-					if (propname.equals("extname"))
-						throw new JsonParseException("Extension " + extname + " in "+ name +" has a property called 'extname'. This is a reserved word.", reader.getCurrentLocation());
 					properties.put(propname, propvalue);
 				}
 				if (!properties.containsKey("point"))

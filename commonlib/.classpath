@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="demos"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/annotation-detector-3.0.3.jar" sourcepath="lib/annotation-detector-3.0.3-src.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jackson-core-2.2.0.jar" sourcepath="lib/jackson-core-2.2.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/trove-3.0.3.jar" sourcepath="lib/trove-3.0.3-src.zip"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/Java SE 7 [1.7.0_51]"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -132,7 +132,7 @@ public class ExtensionRegistry
 		properties.put("point", point);
 		properties.put("singleton", Boolean.TRUE);
 		if (!properties.containsKey("class"))
-			properties.put("class", service.getClass());
+			properties.put("class", service.getClass().getName());
 		final Extension e = new Extension(name, service, properties);
 		registerExtension(e);
 		return e;

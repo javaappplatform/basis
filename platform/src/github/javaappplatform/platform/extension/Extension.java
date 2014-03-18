@@ -144,10 +144,17 @@ public class Extension
 	{
 		if (this.clazz == null)
 		{
-			final Class<?> clazzprop = this.getProperty("class");
+			final String clazzprop = this.getProperty("class");
 			if (clazzprop == null)
-				throw new IllegalStateException("This extension "+this.name+" does not provide a service object. The 'class' property is missing.");
-			this.clazz = clazzprop;
+				throw new ServiceInstantiationException("This extension "+this.name+" does not provide a service object. The 'class' property is missing.");
+			try
+			{
+				this.clazz = Class.forName(clazzprop);
+			}
+			catch (ClassNotFoundException e)
+			{
+				throw new ServiceInstantiationException("The class specified by this extension in the 'class' property cannot be found.", e);
+			}
 		}
 		final Boolean singleton = this.getProperty("singleton");
 		if (singleton != null && singleton.booleanValue())

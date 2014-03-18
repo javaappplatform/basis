@@ -110,8 +110,9 @@ public class ExtensionLoader
 					}
 					try
 					{
+						//test if class can be found
 						if ("class".equals(propname))
-							propvalue = Class.forName((String) propvalue);
+							Class.forName((String) propvalue);
 					}
 					catch (ClassNotFoundException e)
 					{

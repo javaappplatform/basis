@@ -39,6 +39,11 @@ public class Logger
 	
 	static
 	{
+		configureDefault();
+	}
+	
+	public static final void configureDefault()
+	{
 		try
 		{
 			LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();

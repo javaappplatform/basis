@@ -99,25 +99,33 @@ public class LoggingTools
 
 	private static final void configureLogging(Extension extension)
 	{
-		LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
-		context.reset();
-		StatusManager sm = context.getStatusManager();
-		if (sm != null)
-			sm.add(new InfoStatus("Setting up "+extension.name+" configuration.", context));
-
-		Encoder<ILoggingEvent> encoder = configureEncoder(ExtensionRegistry.getExtensionByName(extension.getProperty("encoder")), context);
-		encoder.setContext(context);
-		encoder.start();
-
-		Appender<ILoggingEvent> appender = configureAppender(ExtensionRegistry.getExtensionByName(extension.getProperty("appender")), encoder);
-		appender.setContext(context);
-		appender.start();
-
-		ch.qos.logback.classic.Logger rootLogger = context.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-		rootLogger.setLevel(Level.toLevel(extension.<String>getProperty("level"), Level.TRACE));
-		rootLogger.addAppender(appender);
-		
-		 StatusPrinter.printIfErrorsOccured(context);
+		try
+		{
+			LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
+			context.reset();
+			StatusManager sm = context.getStatusManager();
+			if (sm != null)
+				sm.add(new InfoStatus("Setting up "+extension.name+" configuration.", context));
+	
+			Encoder<ILoggingEvent> encoder = configureEncoder(ExtensionRegistry.getExtensionByName(extension.getProperty("encoder")), context);
+			encoder.setContext(context);
+			encoder.start();
+	
+			Appender<ILoggingEvent> appender = configureAppender(ExtensionRegistry.getExtensionByName(extension.getProperty("appender")), encoder);
+			appender.setContext(context);
+			appender.start();
+	
+			ch.qos.logback.classic.Logger rootLogger = context.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+			rootLogger.setLevel(Level.toLevel(extension.<String>getProperty("level"), Level.TRACE));
+			rootLogger.addAppender(appender);
+			
+			StatusPrinter.printIfErrorsOccured(context);
+		}
+		catch (Exception e)
+		{
+			Logger.configureDefault();
+			LOGGER.severe("Could not initialize logger config {} properly. Reverted to default config.", extension.name, e);
+		}
 	}
 
 	private static final int F_SIZE = 1 << 1;

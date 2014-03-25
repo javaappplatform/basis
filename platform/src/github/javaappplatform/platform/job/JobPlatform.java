@@ -94,7 +94,7 @@ public class JobPlatform
 								}
 								catch (Exception e)
 								{
-									LOGGER.info("Shutting down job '{}' caused an exception: {}", jobinfo.job.name(), e);
+									LOGGER.info("Shutting down job '{}' caused an exception.", jobinfo.job.name(), e);
 								}
 							}
 

@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
@@ -208,7 +209,15 @@ public class LoggingTools
 				}
 				return rfa;
 			case "syslog":
-				throw new UnsupportedOperationException();
+				SyslogAppender sa = new SyslogAppender();
+				sa.setSyslogHost(ext.getProperty("host"));
+				int port = ext.getProperty("port", -1);
+				if (port != -1)
+					sa.setPort(port);
+				sa.setFacility(ext.getProperty("facility", "SYSLOG"));
+				if (ext.hasProperty("suffixPattern"))
+					sa.setSuffixPattern(ext.getProperty("suffixPattern"));
+				return sa;
 			default:
 				throw new IllegalStateException();
 		}

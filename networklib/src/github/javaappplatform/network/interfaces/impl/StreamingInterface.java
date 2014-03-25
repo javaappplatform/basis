@@ -571,7 +571,7 @@ public class StreamingInterface implements ISessionInterface
 				this.incommingStreams.put(streamID, in);
 			}
 			else
-				LOGGER.fine("Warning. Got message for stream no longer available. Stream ID: " + streamID);
+				LOGGER.warn("Warning. Got message for stream no longer available. Stream ID: {}", Integer.valueOf(streamID));
 		}
 		finally
 		{

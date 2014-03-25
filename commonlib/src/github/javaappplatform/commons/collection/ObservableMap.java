@@ -87,12 +87,12 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 		AbstractSet<java.util.Map.Entry<K, V>> set = new AbstractSet<Map.Entry<K, V>>()
 			{
 
-				class TalkingEntry implements Map.Entry<K, V>
+				class ObservableEntry implements Map.Entry<K, V>
 				{
 
 					private Map.Entry<K, V> internal;
 
-					public TalkingEntry(Map.Entry<K, V> internal)
+					public ObservableEntry(Map.Entry<K, V> internal)
 					{
 						this.internal = internal;
 					}
@@ -160,7 +160,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 							public java.util.Map.Entry<K, V> next()
 							{
 								this.last = this.internal.next();
-								return new TalkingEntry(this.last);
+								return new ObservableEntry(this.last);
 							}
 
 							@Override

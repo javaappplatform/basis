@@ -8,7 +8,7 @@
 */
 {
 
-	"github.javaappplatform.platform.commons.platform.option.extensions" :
+	"github.javaappplatform.platform.option.extensions" :
 	{
 		"point" : "github.javaappplatform.platform.option",
 		"name" : "extensions",
@@ -19,7 +19,7 @@
 		"numOfArgs" : "inf"
 	},
 
-/*	"github.javaappplatform.platform.commons.platform.option.configfile" :
+/*	"github.javaappplatform.platform.option.configfile" :
 	{
 		"point" : "github.javaappplatform.platform.option",
 		"name" : "config",
@@ -29,27 +29,17 @@
 		"numOfArgs" : 1
 	},*/
 
-	"github.javaappplatform.platform.commons.platform.loglevel" :
+	"github.javaappplatform.platform.option.logging.config" :
 	{
 		"point" : "github.javaappplatform.platform.option",
-		"name" : "loglevel",
-		"description" : "Sets the level for which debugging messages will be printed out. One of [ NONE, ERROR, WARNING, INFO, FINE, FINEST ]. If not present, WARNING is assumed as level.",
+		"name" : "logconfig",
+		"description" : "A logging configuration that should be used to configure the log back-end.",
 		"isRequired" : false,
-		"ArgName" : "lvl",
+		"ArgName" : "name",
 		"numOfArgs" : 1
 	},
 
-	"github.javaappplatform.platform.commons.platform.logfile" :
-	{
-		"point" : "github.javaappplatform.platform.option",
-		"name" : "logfile",
-		"description" : "Sets the path of the debugfile. The path can be described using the notation of the java.util.logging package. If this option is not present, logging is done to the console.",
-		"isRequired" : false,
-		"ArgName" : "file",
-		"numOfArgs" : 1
-	},
-
-	"github.javaappplatform.platform.commons.platform.option.help" :
+	"github.javaappplatform.platform.option.help" :
 	{
 		"point" : "github.javaappplatform.platform.option",
 		"name" : "help",
@@ -65,11 +55,18 @@
 		"singleton" : true
 	},
 
+	"github.javaappplatform.platform.boot.InitialJobStart" :
+	{
+		"point" : "github.javaappplatform.platform.boot",
+		"class" : "github.javaappplatform.platform.boot.InitialJobStart",
+		"singleton" : true
+	},
+
 	"github.javaappplatform.platform.alias" :
 	{
 		"point" : "github.javaappplatform.platform.logging.Alias",
 		"package" : "github.javaappplatform.platform",
-		"substitute" : "[jap]"
+		"substitute" : "[p]"
 	}
 
 }

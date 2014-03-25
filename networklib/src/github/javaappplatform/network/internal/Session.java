@@ -187,7 +187,7 @@ public class Session extends SyncedTalkerStub implements IInternalSession
 				msg._setSession(this.sessionID());
 				this.received.add(msg);
 				postReceive = true;
-				LOGGER.finest("Received msg on session " + this.sessionID() + " of type " + msg.type());
+				assert LOGGER.trace("Received msg on session {} of type {}", Integer.valueOf(this.sessionID()), Integer.valueOf(msg.type()));
 			}
 			else
 				msg.dispose();

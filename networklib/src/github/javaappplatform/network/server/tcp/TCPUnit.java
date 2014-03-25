@@ -88,7 +88,7 @@ public class TCPUnit extends Thread implements IInternalServerUnit
 		{
 			while (!TCPUnit.this.isShutdown())
 			{
-				assert LOGGER.fine("Accepting connections on " + TCPUnit.this._socket);
+				assert LOGGER.trace("Accepting connections on {}", TCPUnit.this._socket);
 				TCPUnit.this.socketAccepted(TCPUnit.this._socket.accept());
 			}
 		}
@@ -100,7 +100,7 @@ public class TCPUnit extends Thread implements IInternalServerUnit
 				TCPUnit.this.shutdown();
 			}
 		}
-		LOGGER.fine("TCP unit no longer accepting connections.");
+		LOGGER.debug("TCP unit no longer accepting connections.");
 	}
 
 
@@ -115,7 +115,7 @@ public class TCPUnit extends Thread implements IInternalServerUnit
 			if (!this.isShutdown())
 			{
 				InternalNetTools.configureSocket(clientSocket);
-				LOGGER.info("Client "+ clientSocket.getInetAddress() +" connects on TCP port.");
+				LOGGER.info("Client {} connects on TCP port.", clientSocket.getInetAddress());
 				final byte[] initMSG = InternalNetTools.readRawMSG(clientSocket.getInputStream(), InternalNetTools.TIMEOUT);
 				if (initMSG != null && initMSG.length == InternalMessageAPI.INIT_MSGBODY_LENGTH)
 				{
@@ -149,7 +149,7 @@ public class TCPUnit extends Thread implements IInternalServerUnit
 		}
 		catch (IOException ioe)
 		{
-			LOGGER.fine("Accepting a client socket threw an exception.", ioe);
+			LOGGER.debug("Accepting a client socket threw an exception.", ioe);
 			errorID = IServerMessageAPI.ERROR_UNKNOWN;
 		}
 		
@@ -157,11 +157,11 @@ public class TCPUnit extends Thread implements IInternalServerUnit
 		{
 			clientSocket.getOutputStream().write(ServerUtils.initError(errorID));
 			clientSocket.getOutputStream().flush();
-			LOGGER.fine("Socket not accepted. Error ID: " + errorID);
+			LOGGER.debug("Socket not accepted. Error ID: {}", Integer.valueOf(errorID));
 		}
 		catch (IOException ex)
 		{
-			LOGGER.fine("Socket not accepted. Error ID: " + errorID + ". Additional exception when writing error message: ", ex);
+			LOGGER.debug("Socket not accepted. Error ID: {}. Additional exception when writing error message: {}", Integer.valueOf(errorID), ex);
 		}
 		finally
 		{

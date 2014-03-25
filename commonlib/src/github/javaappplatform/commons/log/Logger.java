@@ -9,40 +9,77 @@
 */
 package github.javaappplatform.commons.log;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Filter;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.LogRecord;
+import github.javaappplatform.commons.collection.SmallMap;
+
+import java.util.Map;
+
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.CoreConstants;
+import ch.qos.logback.core.status.InfoStatus;
+import ch.qos.logback.core.status.StatusManager;
 
 /**
- * Logger implementation which can be used with asserts.
- * @author Sven
+ * slf4j based logger implementation, that can be used with asserts.
+ * @author funsheep
  */
 public class Logger
 {
 
-	private static final String					CLASSNAME	= Logger.class.getName();
-	private static final Logger					ROOT		= new Logger("");
+	private static final String	CLASSNAME = Logger.class.getName();
 
-	private final java.util.logging.Logger	logger;
+	private final org.slf4j.Logger logger;
+	private boolean assertsEnabled = false;
 
+	
+	static
+	{
+		try
+		{
+			LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
+			context.reset();
+			StatusManager sm = context.getStatusManager();
+			if (sm != null)
+				sm.add(new InfoStatus("Setting up default configuration.", context));
+			
+			@SuppressWarnings("unchecked")
+			Map<String, String> patternreg = (Map<String, String>) context.getObject(CoreConstants.PATTERN_RULE_REGISTRY);
+			if (patternreg == null)
+			{
+				patternreg = new SmallMap<>();
+				context.putObject(CoreConstants.PATTERN_RULE_REGISTRY, patternreg);
+			}
+			patternreg.put("alias", LoggerRenamer.class.getName());
+			ClassRenamer.addRule("github.javaappplatform", "+[jap]");
+			ClassRenamer.addRule("github.javaappplatform.commons", "+[com]");
+			
+			PatternLayoutEncoder pl = new PatternLayoutEncoder();
+			pl.setContext(context);
+			pl.setPattern("%-5level %-20([%thread]) %-36alias{36} - %msg%n");
+//			pl.setPattern("%highlight(%-5level) %red(%-20([%thread])) %cyan(%-36alias{36}) %red(- %msg) %n");
+			pl.start();
 
-	// static
-	// {
-	// // only required/active until loggin configuration is loaded
-	// // comment to see the 4 SimpleFormatter log messages
-	// SmartFormatter smart = new SmartFormatter();
-	// Handler[] handler = ROOT.logger.getHandlers();
-	// for (int i=0;i<handler.length;i++)
-	// {
-	// handler[i].setLevel(Level.ALL);
-	// handler[i].setFormatter(smart);
-	// }
-	// }
+			ConsoleAppender<ILoggingEvent> ca = new ConsoleAppender<ILoggingEvent>();
+			ca.setContext(context);
+			ca.setName("console");
+			ca.setEncoder(pl);
+			ca.setTarget("System.err");
+			ca.start();
+			ch.qos.logback.classic.Logger rootLogger = context.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+			rootLogger.setLevel(Level.TRACE);
+			rootLogger.addAppender(ca);
+		}
+		catch (Exception e)
+		{
+			LoggerFactory.getLogger(Logger.class).error("Could not setup the default logging rules.", e);
+		}
+	}
+
 
 	/**
 	 * Constructor.
@@ -50,85 +87,22 @@ public class Logger
 	 */
 	protected Logger(final String name)
 	{
-		this.logger = java.util.logging.Logger.getLogger(name);
+		assert this.assertsEnabled = true;
+		this.logger = LoggerFactory.getLogger(name);
 	}
 
-	/**
-	 * Log on the {@link Level#FINEST} level.
-	 * @param s
-	 * @return true
-	 */
-	public boolean finest(final String s)
-	{
-		return this.log(Level.FINEST, s, null, (Object[])null);
-	}
-
-	/**
-	 * Log on the {@link Level#FINEST} level. Stringsequences like '{X}' (where X is a number greater than null) are replaced by the objects string representation of
-	 * the object at index X in the given array.
-	 * @param s
-	 * @param e
-	 * @return true
-	 */
-	public boolean finest(final String s, Object ... os)
-	{
-		return this.log(Level.FINEST, s, os);
-	}
-
-
-	/**
-	 * Log on the {@link Level#FINER} level.
-	 * @param s
-	 * @return true
-	 */
-	public boolean finer(final String s)
-	{
-		return this.log(Level.FINER, s, null, (Object[])null);
-	}
-
-	/**
-	 * Log on the {@link Level#FINER} level. Stringsequences like '{X}' (where X is a number greater than null) are replaced by the objects string representation of
-	 * the object at index X in the given array.
-	 * @param s
-	 * @param e
-	 * @return true
-	 */
-	public boolean finer(final String s, Object ... os)
-	{
-		return this.log(Level.FINER, s, os);
-	}
 
 	/**
 	 * Log on the {@link Level#FINE} level.
 	 * @param s
 	 * @return true
 	 */
-	public boolean fine(final String s)
+	public boolean trace(final String msg, Object... objects)
 	{
-		return this.log(Level.FINE, s, null, (Object[])null);
-	}
-
-	/**
-	 * Log on the {@link Level#FINE} level.
-	 * @param s
-	 * @param throwable
-	 * @return true
-	 */
-	public boolean fine(final String s, final Throwable throwable)
-	{
-		return this.log(Level.FINE, s, throwable, (Object[])null);
-	}
-
-	/**
-	 * Log on the {@link Level#FINE} level. Stringsequences like '{X}' (where X is a number greater than null) are replaced by the objects string representation of
-	 * the object at index X in the given array.
-	 * @param s
-	 * @param e
-	 * @return true
-	 */
-	public boolean fine(final String s, Object ... os)
-	{
-		return this.log(Level.FINE, s, os);
+		this.logger.trace(msg, objects);
+		if (!this.assertsEnabled)
+			this.logger.warn("The 'trace' option of the logger should be used only with assertions.");
+		return true;
 	}
 
 	/**
@@ -136,32 +110,10 @@ public class Logger
 	 * @param s
 	 * @return true
 	 */
-	public boolean info(final String s)
+	public boolean info(final String format, Object... objects)
 	{
-		return this.log(Level.INFO, s, null, (Object[])null);
-	}
-
-	/**
-	 * Log on the {@link Level#INFO} level.
-	 * @param s
-	 * @param e
-	 * @return true
-	 */
-	public boolean info(final String s, final Throwable e)
-	{
-		return this.log(Level.INFO, s, e, (Object[])null);
-	}
-
-	/**
-	 * Log on the {@link Level#INFO} level. Stringsequences like '{X}' (where X is a number greater than null) are replaced by the objects string representation of
-	 * the object at index X in the given array.
-	 * @param s
-	 * @param e
-	 * @return true
-	 */
-	public boolean info(final String s, Object ... os)
-	{
-		return this.log(Level.INFO, s, os);
+		this.logger.info(format, objects);
+		return true;
 	}
 
 	/**
@@ -169,9 +121,10 @@ public class Logger
 	 * @param s
 	 * @return true
 	 */
-	public boolean warn(final String s)
+	public boolean warn(final String format, Object...arguments)
 	{
-		return this.log(Level.WARNING, s, null, (Object[])null);
+		this.logger.warn(format, arguments);
+		return true;
 	}
 
 	/**
@@ -180,42 +133,10 @@ public class Logger
 	 * @param e
 	 * @return true
 	 */
-	public boolean warn(final String s, final Throwable e)
+	public boolean warn(final String msg, final Throwable t)
 	{
-		return this.log(Level.WARNING, s, e, (Object[])null);
-	}
-
-	/**
-	 * Log on the {@link Level#WARNING} level. Stringsequences like '{X}' (where X is a number greater than null) are replaced by the objects string representation of
-	 * the object at index X in the given array.
-	 * @param s
-	 * @param e
-	 * @return true
-	 */
-	public boolean WARNING(final String s, Object ... os)
-	{
-		return this.log(Level.WARNING, s, os);
-	}
-
-	/**
-	 * Log on the {@link Level#SEVERE} level.
-	 * @param s
-	 * @return true
-	 */
-	public boolean severe(final String s)
-	{
-		return this.log(Level.SEVERE, s, null, (Object[])null);
-	}
-
-	/**
-	 * Log on the {@link Level#SEVERE} level.
-	 * @param s
-	 * @param e
-	 * @return true
-	 */
-	public boolean severe(final String s, final Throwable e)
-	{
-		return this.log(Level.SEVERE, s, e, (Object[])null);
+		this.logger.warn(msg, t);
+		return true;
 	}
 
 	/**
@@ -225,9 +146,22 @@ public class Logger
 	 * @param e
 	 * @return true
 	 */
-	public boolean severe(final String s, Object ... os)
+	public boolean severe(final String format, Object... arguments)
 	{
-		return this.log(Level.SEVERE, s, os);
+		this.logger.error(format, arguments);
+		return true;
+	}
+
+	/**
+	 * Log on the {@link Level#SEVERE} level.
+	 * @param s
+	 * @param e
+	 * @return true
+	 */
+	public boolean severe(final String msg, final Throwable t)
+	{
+		this.logger.error(msg, t);
+		return true;
 	}
 
 	/**
@@ -236,9 +170,10 @@ public class Logger
 	 * @param e
 	 * @return true
 	 */
-	public boolean debug(final String s, final Throwable e)
+	public boolean debug(final String msg, final Throwable t)
 	{
-		return this.log(Level.FINE, s, e, (Object[])null);
+		this.logger.debug(msg, t);
+		return true;
 	}
 
 	/**
@@ -247,68 +182,9 @@ public class Logger
 	 * @param e
 	 * @return true
 	 */
-	public boolean debug(final String s)
+	public boolean debug(final String format, Object... arguments)
 	{
-		return this.log(Level.FINE, s, (Object[])null);
-	}
-
-	/**
-	 * Log on the given level.
-	 * @param l
-	 * @param msg
-	 * @return true
-	 */
-	public boolean log(final Level l, final String msg)
-	{
-		return this.log(l, msg, null, (Object[])null);
-	}
-
-	/**
-	 * Log on the given level. Stringsequences like '{X}' (where X is a number greater than null) are replaced by the objects string representation of
-	 * the object at index X in the given array.
-	 * @param l
-	 * @param msg
-	 * @param o
-	 * @return true
-	 */
-	public boolean log(final Level l, final String msg, final Object... o)
-	{
-		return this.log(l, msg, null, o);
-	}
-
-	/**
-	 * Log on the given level.
-	 * @param l
-	 * @param msg
-	 * @param t
-	 * @return true
-	 */
-	public boolean log(final Level l, final String msg, final Throwable t)
-	{
-		return this.log(l, msg, t, (Object[])null);
-	}
-
-	/**
-	 * Log on the given level. Stringsequences like '{X}' (where X is a number greater than null) are replaced by the objects string representation of
-	 * the object at index X in the given array.
-	 * @param l
-	 * @param msg
-	 * @param t
-	 * @param o
-	 * @return true
-	 */
-	public boolean log(final Level l, final String msg, final Throwable t, final Object... o)
-	{
-		if (!this.logger.isLoggable(l))
-			return true;
-
-		final StackTraceElement st = getStackItem();
-		final LogRecord r = new LogRecord(l, msg);
-		r.setSourceClassName(st.getClassName());
-		r.setSourceMethodName(st.getMethodName());
-		r.setThrown(t);
-		r.setParameters(o);
-		this.logger.log(r);
+		this.logger.debug(format, arguments);
 		return true;
 	}
 
@@ -339,7 +215,6 @@ public class Logger
 
 	/**
 	 * Returns the first stack element which is not part of the Logger hierarchie.
-	 *
 	 * @return the first stack element which is not part of the Logger hierarchie
 	 */
 	private static StackTraceElement getStackItem()
@@ -389,16 +264,6 @@ public class Logger
 	}
 
 	/**
-	 * Discover whether or not this logger is sending its output to its parent logger.
-	 *
-	 * @return true if output is to be sent to the logger's parent
-	 */
-	public synchronized boolean getUseParentHandlers()
-	{
-		return this.logger.getUseParentHandlers();
-	}
-
-	/**
 	 * Returns a new logger instance.
 	 *
 	 * @param c class to obtain the name from
@@ -418,93 +283,6 @@ public class Logger
 	public static <T> Logger getPackageLogger(final Class<T> c)
 	{
 		return new Logger(c.getPackage().getName());
-	}
-
-	/**
-	 * All Handlers are only applied to the root level.
-	 *
-	 * @param handler
-	 * @return <code>true</code> (always)
-	 */
-	public static boolean addHandler(final Handler handler)
-	{
-		ROOT.logger.addHandler(handler);
-		return true;
-	}
-
-	/**
-	 * All Handlers are only applied to the root level.
-	 *
-	 * @param handler
-	 * @return <code>true</code> (always)
-	 */
-	public static boolean removeHandler(final Handler handler)
-	{
-		ROOT.logger.removeHandler(handler);
-		return true;
-	}
-
-	/**
-	 * Sets the level of the root Logger and its ConsoleHandler
-	 *
-	 * @param level new logging level
-	 * @return true
-	 */
-	public boolean setLevel(final Level level)
-	{
-		this.logger.setLevel(level);
-		return true;
-	}
-
-	/**
-	 * Sets the formatter of the ConsoleHandler of the rootLogger.
-	 *
-	 * @param formatter the formatter to set
-	 * @return <code>true</code> (always)
-	 */
-	public static boolean setFormatter(final Formatter formatter)
-	{
-		final Handler[] handlers = Logger.getHandlers();
-		for (final Handler element : handlers)
-			element.setFormatter(formatter);
-		return true;
-	}
-
-	/**
-	 * Returns the {@link #ROOT} logger's handlers.
-	 *
-	 * @return the {@link #ROOT} logger's handlers.
-	 * @see java.util.logging.Logger
-	 */
-	public static Handler[] getHandlers()
-	{
-		return ROOT.logger.getHandlers();
-	}
-
-	/**
-	 * Sets a filter.
-	 * @param filter
-	 * @return <code>true</code> (always)
-	 * @see java.util.logging.Logger#setFilter(Filter)
-	 */
-	public boolean setFilter(final Filter filter)
-	{
-		this.logger.setFilter(filter);
-		return true;
-	}
-
-	/**
-	 * Returns <code>true</code>.
-	 *
-	 * @param config inputstream to read configuration data from.
-	 * @return <code>true</code>
-	 * @throws IOException if an IO error occured
-	 * @throws SecurityException if the caller is not allowed to perform this operation
-	 */
-	public static boolean loadConfiguration(final InputStream config) throws IOException, SecurityException
-	{
-		LogManager.getLogManager().readConfiguration(config);
-		return true;
 	}
 
 }

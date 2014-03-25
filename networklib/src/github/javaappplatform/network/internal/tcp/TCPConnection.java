@@ -79,7 +79,7 @@ public abstract class TCPConnection
 		}
 		catch (InterruptedException e)
 		{
-			assert LOGGER.fine("Timeout on system message send.");
+			assert LOGGER.trace("Timeout on system message send.");
 			//do nothing we just fail since network may be down anyway
 		}
 	}

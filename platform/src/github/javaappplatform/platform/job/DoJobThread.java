@@ -258,7 +258,7 @@ final class DoJobThread extends Thread
 				}
 				catch (Exception e)
 				{
-					LOGGER.info("Shutting down job '" + job.name() + "' caused an exception: ", e);
+					LOGGER.info("Shutting down job '{}' caused an exception: {}", job.name(), e);
 				}
 			}
 

@@ -12,7 +12,6 @@ import github.javaappplatform.commons.collection.SmallSet;
 import github.javaappplatform.commons.events.Event;
 import github.javaappplatform.commons.events.SyncedTalkerStub;
 import github.javaappplatform.commons.util.Close;
-import github.javaappplatform.commons.util.Collections2;
 import github.javaappplatform.network.INetworkAPI;
 import github.javaappplatform.network.internal.IInternalServer;
 import github.javaappplatform.network.internal.IInternalServerUnit;
@@ -24,6 +23,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -184,7 +184,7 @@ public class Server extends SyncedTalkerStub implements IInternalServer
 		this.clientLock.lock();
 		try
 		{
-			return Collections2.wrapArray(this._clientUnits.values());
+			return Collections.unmodifiableCollection(this._clientUnits.valueCollection());
 		}
 		finally
 		{

@@ -6,52 +6,21 @@
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
 	You should have received a copy of the MPL along with this library; see the
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
-*/
+ */
 package github.javaappplatform.commons.util;
 
 import github.javaappplatform.commons.log.Logger;
 
 import java.io.Closeable;
 import java.io.OutputStream;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.channels.FileLock;
-import java.util.logging.Level;
 
 import javax.imageio.ImageReader;
-import javax.naming.Context;
 
 public class Close
 {
 
-
 	private final static Logger LOGGER = Logger.getLogger();
-
-
-	public static void close(Socket s)
-	{
-		try
-		{
-			if (s != null)
-				s.close();
-		} catch (final Exception e)
-		{
-			assert LOGGER.log(Level.INFO, "unimportant", e);
-		}
-	}
-
-	public static void close(DatagramSocket s)
-	{
-		try
-		{
-			if (s != null)
-				s.close();
-		} catch (final Exception e)
-		{
-			assert LOGGER.log(Level.INFO, "unimportant", e);
-		}
-	}
 
 	public static void close(ImageReader s)
 	{
@@ -59,21 +28,11 @@ public class Close
 		{
 			if (s != null)
 				s.dispose();
-		} catch (final Exception e)
-		{
-			assert LOGGER.log(Level.INFO, "unimportant", e);
+			assert LOGGER.trace("Close(ImageReader)--> Close");
 		}
-	}
-
-	public static void close(ServerSocket s)
-	{
-		try
+		catch (final Exception e)
 		{
-			if (s != null)
-				s.close();
-		} catch (final Exception e)
-		{
-			assert LOGGER.log(Level.INFO, "unimportant", e);
+			assert LOGGER.trace("unimportant", e);
 		}
 	}
 
@@ -86,31 +45,18 @@ public class Close
 				try
 				{
 					s.flush();
-				} catch (final Exception e)
+				}
+				catch (final Exception e)
 				{
-					assert LOGGER.log(Level.INFO, "unimportant", e);
+					assert LOGGER.trace("unimportant", e);
 				}
 				s.close();
 			}
-			assert LOGGER.fine("Close(stream)--> Close");
-
-		} catch (final Exception e)
-		{
-			assert LOGGER.log(Level.INFO, "unimportant", e);
+			assert LOGGER.trace("Close(OutputStream)--> Close");
 		}
-	}
-
-	public static void close(Closeable s)
-	{
-		try
+		catch (final Exception e)
 		{
-			if (s != null)
-				s.close();
-			assert LOGGER.fine("Close(closeable)--> Close");
-
-		} catch (final Exception e)
-		{
-			assert LOGGER.log(Level.INFO, "unimportant", e);
+			assert LOGGER.trace("unimportant", e);
 		}
 	}
 
@@ -119,24 +65,30 @@ public class Close
 		try
 		{
 			if (s != null)
+			{
 				s.close();
-			assert LOGGER.fine("Close(filelock)--> Close");
-
-		} catch (final Exception e)
+				assert LOGGER.trace("Close(FileLock)--> Close");
+			}
+		}
+		catch (final Exception e)
 		{
-			assert LOGGER.log(Level.INFO, "unimportant", e);
+			assert LOGGER.trace("unimportant", e);
 		}
 	}
 
-	public static void close(Context s)
+	public static void close(Closeable s)
 	{
 		try
 		{
 			if (s != null)
+			{
 				s.close();
-		} catch (final Exception e)
+				assert LOGGER.trace("Close(Closeable)--> Close");
+			}
+		}
+		catch (final Exception e)
 		{
-			assert LOGGER.log(Level.INFO, "unimportant", e);
+			assert LOGGER.trace("unimportant", e);
 		}
 	}
 

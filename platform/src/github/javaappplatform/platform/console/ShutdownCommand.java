@@ -9,6 +9,7 @@
 package github.javaappplatform.platform.console;
 
 import github.javaappplatform.platform.Platform;
+import github.javaappplatform.platform.job.JobPlatform;
 
 import java.io.PrintStream;
 
@@ -26,7 +27,15 @@ public class ShutdownCommand implements ICommand
 	public void run(String[] args, PrintStream out)
 	{
 		out.println("Shutting down. Have a nice day!");
-		Platform.shutdown();
+		JobPlatform.runJob(new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				Platform.shutdown();
+			}
+		}, JobPlatform.MAIN_THREAD);
 	}
 
 }

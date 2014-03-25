@@ -22,9 +22,13 @@ public class PlatformBootEntry implements IBootEntry
 	@Override
 	public void startup(Extension e) throws PlatformException
 	{
-		LoggingTools.configureAliases();
-
-		LoggingTools.configureLoglevel();
+		String logconfig = Platform.getOptionValue("logconfig");
+		if (logconfig == null)
+		{
+			LoggingTools.configureAliases();
+			return;
+		}
+		LoggingTools.configureLogging(logconfig);
 	}
 
 	/**
@@ -33,7 +37,7 @@ public class PlatformBootEntry implements IBootEntry
 	@Override
 	public void shutdown() throws PlatformException
 	{
-		//do nothing
+		LoggingTools.closeLogger();
 	}
 
 }

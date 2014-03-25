@@ -52,7 +52,7 @@ class TCPHandler
 					if (msg == null)
 						break;
 
-					assert LOGGER.fine("Received " + msg);
+					assert LOGGER.trace("Received {}", msg);
 					TCPHandler.this._con.received(msg);
 				}
 				TCPHandler.this.shutdown();
@@ -90,24 +90,7 @@ class TCPHandler
 					msg = TCPHandler.this._con.take();
 					if (msg != null)
 					{
-						assert LOGGER.fine("Send " + msg);
-//						if (msg.type() == 200 || msg.type() == 201 || msg.type() == 202)
-//						{
-//							read.reset(msg);
-//							switch (msg.type())
-//							{
-//								case 200:
-//									System.out.println("Send Head for " + read.readInt());
-//									break;
-//								case 201:
-//									System.out.println("Send Inter for " + read.readInt());
-//									break;
-//								case 202:
-//									System.out.println("Send Tail for " + read.readInt());
-//									break;
-//							}
-//							
-//						}
+						assert LOGGER.trace("Send {}", msg);
 						InternalNetTools.sendMSG(out, msg);
 						if (msg.callback() != null)
 							msg.callback().handleEvent(new Event(Integer.valueOf(msg.session()), INetworkAPI.EVENT_MSG_SEND, Long.valueOf(msg.orderID())));
@@ -165,7 +148,7 @@ class TCPHandler
 
 	private void errorHandling(IOException e)
 	{
-		assert LOGGER.fine("TCP MSG Handler shutdown.", e);
+		assert LOGGER.trace("TCP MSG Handler shutdown.", e);
 		this.shutdown();
 	}
 

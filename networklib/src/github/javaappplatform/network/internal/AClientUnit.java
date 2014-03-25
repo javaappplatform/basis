@@ -12,7 +12,6 @@ import github.javaappplatform.commons.events.Event;
 import github.javaappplatform.commons.events.SyncedTalkerStub;
 import github.javaappplatform.commons.log.Logger;
 import github.javaappplatform.commons.util.Close;
-import github.javaappplatform.commons.util.Collections2;
 import github.javaappplatform.network.IClientUnit;
 import github.javaappplatform.network.INetworkAPI;
 import github.javaappplatform.network.ISession;
@@ -25,6 +24,7 @@ import gnu.trove.set.hash.TIntHashSet;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -153,7 +153,7 @@ public abstract class AClientUnit extends SyncedTalkerStub implements IClientUni
 		this.sessionLock.lock();
 		try
 		{
-			return Collections2.wrapArray(this._sessionMap.values());
+			return Collections.<ISession>unmodifiableCollection(this._sessionMap.valueCollection());
 		}
 		finally
 		{
@@ -293,7 +293,7 @@ public abstract class AClientUnit extends SyncedTalkerStub implements IClientUni
 		}
 		catch (IOException ex)
 		{
-			LOGGER.info("Client Unit ["+this.clientID()+"] went down. Connection Timeout.");
+			LOGGER.info("Client Unit [{}] went down. Connection Timeout.", Integer.valueOf(this.clientID()));
 			this.shutdown();
 		}
 	}

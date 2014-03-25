@@ -80,7 +80,7 @@ public class Annotations
 				}
 				catch (ClassNotFoundException e)
 				{
-					LOGGER.debug("Could not find class "+ className + " on classpath. This should never happen.");
+					LOGGER.debug("Could not find class {} on classpath. This should never happen.", className);
 				}
 			}
 		};

@@ -160,7 +160,7 @@ public class ExtensionRegistry
 					set.add(e);
 				}
 				TALKER.postEvent(EVENT_EXTENSION_REGISTERED, e);
-				assert LOGGER.fine("Found extension: " + e);
+				assert LOGGER.trace("Found extension: {}", e);
 			}
 		}
 		finally

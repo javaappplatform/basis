@@ -98,7 +98,7 @@ class UDPHandler
 			}
 			catch (IOException ex)
 			{
-				LOGGER.fine("UDP connection closed.", ex);
+				LOGGER.debug("UDP connection closed.", ex);
 			}
 			
 		}
@@ -145,7 +145,7 @@ class UDPHandler
 		}
 		catch (InterruptedException e)
 		{
-			LOGGER.fine("Connection Timeout.");
+			LOGGER.warn("Connection Timeout.");
 		}
 	}
 	

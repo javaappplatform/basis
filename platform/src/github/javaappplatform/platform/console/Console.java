@@ -40,8 +40,6 @@ public class Console extends ADoJob
 		{
 			try
 			{
-				System.out.println();
-				System.out.print("> ");
 				String strInput = this.console_reader.readLine();
 				if(strInput == null)
 					continue;

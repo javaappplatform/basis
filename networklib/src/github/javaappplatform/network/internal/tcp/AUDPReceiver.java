@@ -52,12 +52,13 @@ public abstract class AUDPReceiver extends Thread
 			{
 				this._socket.receive(this.packet);
 				final Message msg = InternalNetTools.readUDPMSG(this.packet);
-				assert LOGGER.fine("Received " + msg);
+				assert LOGGER.trace("Received {}", msg);
 				AUDPReceiver.this.received(msg);
 			}
-		} catch (final IOException e)
+		}
+		catch (final IOException e)
 		{
-			LOGGER.fine("UDP port closed", e);
+			LOGGER.info("UDP port closed", e);
 		}
 	}
 

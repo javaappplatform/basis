@@ -171,7 +171,7 @@ public class Platform
 
 	private static final void parseOptions(String[] args) throws PlatformException, IOException
 	{
-		LOGGER.info("Options: " + Arrays.toString(args));
+		LOGGER.info("Options: {}", Arrays.toString(args));
 		final String configpath = CmdLineTools.getValue("config", args);
 		if (configpath != null)
 			args = ConfigFileTools.read(configpath);
@@ -249,7 +249,7 @@ public class Platform
 		{
 			try
 			{
-				LOGGER.fine("Trying to shut down entry: " + entry.name);
+				LOGGER.debug("Trying to shut down entry: {}", entry.name);
 				entry.<IBootEntry>getService().shutdown();
 			}
 			catch (ServiceInstantiationException e)

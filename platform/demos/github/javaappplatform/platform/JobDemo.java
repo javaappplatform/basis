@@ -6,7 +6,7 @@
 	You should have received a copy of the MPL along with this library; see the
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
 */
-package de.d3fact.platform;
+package github.javaappplatform.platform;
 
 import github.javaappplatform.platform.Platform;
 import github.javaappplatform.platform.job.ADoJob;

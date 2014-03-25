@@ -65,7 +65,7 @@ public class Bootup extends AComputeDoJob
 							}
 					if (solved)
 					{
-						LOGGER.info("Trying to start up " + entry.name);
+						LOGGER.info("Trying to start up {}", entry.name);
 						entry.<IBootEntry>getService().startup(entry);
 						this.loaded.add(entry.name);
 						dead = false;

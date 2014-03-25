@@ -94,7 +94,7 @@ public class JobPlatform
 								}
 								catch (Exception e)
 								{
-									LOGGER.info("Shutting down job '" + jobinfo.job.name() + "' caused an exception: ", e);
+									LOGGER.info("Shutting down job '{}' caused an exception: {}", jobinfo.job.name(), e);
 								}
 							}
 
@@ -115,7 +115,7 @@ public class JobPlatform
 	public static void registerJob(IJob job)
 	{
 		if (job instanceof IDoJob)
-			LOGGER.warn("The job " + job.name() + " is a IDoJob and should not be registered. Instead he should be added as a Todo.");
+			LOGGER.warn("The job {} is a IDoJob and should not be registered. Instead he should be added as a Todo.", job.name());
 		LOCK_ALLJOBS.lock();
 		try
 		{

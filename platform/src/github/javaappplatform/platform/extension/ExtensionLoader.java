@@ -46,7 +46,7 @@ public class ExtensionLoader
 	{
 		for (String name : extensions)
 		{
-			LOGGER.info("Trying to load extension " + name);
+			LOGGER.info("Trying to load extension {}", name);
 			ExtensionRegistry.registerExtension(load(name));
 		}
 	}

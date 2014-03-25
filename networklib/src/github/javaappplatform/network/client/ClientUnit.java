@@ -85,7 +85,7 @@ public class ClientUnit extends AClientUnit
 		}
 		catch (IOException | IllegalStateException e)
 		{
-			assert LOGGER.fine("Could not establish connection to client.", e);
+			assert LOGGER.trace("Could not establish connection to client.", e);
 		}
 		
 		this.state.set(this.con != null ? this.con.state() : INetworkAPI.STATE_NOT_CONNECTED);
@@ -105,7 +105,7 @@ public class ClientUnit extends AClientUnit
 		}
 		catch (IOException e)
 		{
-			LOGGER.fine("UDP Handler could not be initiated", e);
+			assert LOGGER.trace("UDP Handler could not be initiated", e);
 		}
 
 		this.postEvent(INetworkAPI.EVENT_STATE_CHANGED);
@@ -115,7 +115,7 @@ public class ClientUnit extends AClientUnit
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			LOGGER.fine("TRYING TO CONNECT TO: " + this.remoteTCP);
+			LOGGER.debug("TRYING TO CONNECT TO: {}", this.remoteTCP);
 			final Socket socket = InternalNetTools.newSocket(this.localPortRange);
 			socket.connect(this.remoteTCP, INetworkAPI.CONNECTION_TIMEOUT);
 			final byte[] initMSG = new byte[4 + InternalMessageAPI.INIT_MSGBODY_LENGTH];
@@ -152,13 +152,13 @@ public class ClientUnit extends AClientUnit
 						}
 						return socket;
 					}
-					LOGGER.warn("TCPSocket got wrong Error-MSG with error ID: " + field2);
+					LOGGER.warn("TCPSocket got wrong Error-MSG with error ID: {}", Integer.valueOf(field2));
 				}
 				else
-					LOGGER.fine("TCPSocket got wrong Ack-MSG: " + Strings.toHexString(ackMSG));
+					LOGGER.debug("TCPSocket got wrong Ack-MSG: {}", Strings.toHexString(ackMSG));
 			}
 			else
-				LOGGER.fine("TCPSocket requesting Ack-MSG timed out.");
+				LOGGER.debug("TCPSocket requesting Ack-MSG timed out.");
 		}
 		throw new IOException("Several problems occured when trying to connect to server, giving up");
 	}

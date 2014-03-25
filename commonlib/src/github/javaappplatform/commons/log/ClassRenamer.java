@@ -25,17 +25,17 @@ import java.util.Map;
  * To further explain the inner workings of the formatter we use examples.
  *
  * Example Ruleset:
- * <code>de.d3fact.util.Tools=Close
- * de.d3fact=+[d3f]
- * de.d3fact.util=[util]
+ * <code>github.javaappplatform.util.Tools=Close
+ * github.javaappplatform=+[jap]
+ * github.javaappplatform.util=[util]
  * </code>
  *
  * Classnames to substitute, plus the result:
  * <code>
- * de.d3fact.util.Tools -> [d3f]Close
- * de.d3fact.util.TextA -> [d3f][util].TextA
- * de.d3fact.modelapi.Test -> [d3f].modelapi.Test
- * com.d3fact.test.ABC -> [com]
+ * github.javaappplatform.util.Tools -> [jap]Close
+ * github.javaappplatform.util.TextA -> [jap].util.TextA
+ * github.javaappplatform.modelapi.Test -> [jap].modelapi.Test
+ * com.platform.test.ABC -> com.platform.test.ABC
  * </code>
  *
  * The formatter searches for the largest possible substitution (any rule type is permitted). Then it searches for
@@ -44,15 +44,15 @@ import java.util.Map;
  *
  * Ruleset:
  * <code>
- * com.d3fact=[d3f]
+ * com.jap=[jap]
  * com=*[com]
  * </code>
  * Result:
  * <code>
- * com.d3fact.test.ABC -> [com]
+ * com.jap.test.ABC -> [com]
  * </code>
  * If the formatter finds a STAR rule the current substitution string is replaced. In the
- * above example first the [d3f] rule is applied (this is the largest possible substitution), but
+ * above example first the [jap] rule is applied (this is the largest possible substitution), but
  * then it finds the overriding rule for [com], so everything is replaced by that string. The
  * formatter can also be configured during runtime. The actual renaming algorithm, located in
  * github.javaappplatform.commons.platform.log.ClassRenamer does provide a handy .addRuleset(Map<String,String>)
@@ -92,6 +92,12 @@ public class ClassRenamer
 	private static final HashMap<String, String> ALIAS_CACHE = new HashMap<String, String>();
 
 
+	public static final void addRule(String identifier, String replacement)
+	{
+		ENTRY_BY_NAME.put(identifier, new Entry(replacement));
+		ALIAS_CACHE.clear();
+	}
+	
 	/**
 	 * Adds a the given rule set to the known rules. Note that known rules are overridden.
 	 * @param rules the rules to add.
@@ -169,12 +175,6 @@ public class ClassRenamer
 			tmp_classname = tmp_classname.substring(0, lastdot);
 		}
 		return sb.toString();
-	}
-
-
-	private ClassRenamer()
-	{
-		//no instance
 	}
 
 }

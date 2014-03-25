@@ -7,9 +7,10 @@
 	You should have received a copy of the MPL along with this library; see the
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
 */
-package de.d3fact.common;
+package github.javaappplatform.common;
 
-import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author funsheep
@@ -17,15 +18,14 @@ import java.net.URI;
  */
 public class Scratchbook
 {
+	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd Hmmss");
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		URI uri = new URI("file:/test.tmp?query=test#fragment");
-		System.out.println(uri.getQuery());
-		System.out.println(uri.getFragment());
+		System.out.println(DATE_FORMAT.format(LocalDateTime.now()));
 	}
 
 }

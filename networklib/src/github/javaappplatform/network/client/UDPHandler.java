@@ -65,7 +65,7 @@ class UDPHandler
 			}
 			catch (IOException ex)
 			{
-				LOGGER.fine("UDP connection closed.", ex);
+				LOGGER.debug("UDP connection closed.", ex);
 			}
 		}
 

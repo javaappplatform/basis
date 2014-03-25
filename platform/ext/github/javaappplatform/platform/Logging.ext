@@ -1,0 +1,69 @@
+{
+	"logging.console.pretty":
+	{
+		"point" : "github.javaappplatform.platform.logging.Config",
+		"appender" : "github.javaappplatform.platform.logging.appender.console",
+		"encoder" : "github.javaappplatform.platform.logging.encoder.alias.colored"
+	},
+
+	"logging.console.standard":
+	{
+		"point" : "github.javaappplatform.platform.logging.Config",
+		"appender" : "github.javaappplatform.platform.logging.appender.console",
+		"encoder" : "github.javaappplatform.platform.logging.encoder.alias"
+	},
+	
+	"logging.file.standard":
+	{
+		"point" : "github.javaappplatform.platform.logging.Config",
+		"appender" : "github.javaappplatform.platform.logging.appender.file.simple",
+		"encoder" : "github.javaappplatform.platform.logging.encoder.alias"
+	},
+	
+	"github.javaappplatform.platform.logging.encoder.alias.colored":
+	{
+		"point" : "github.javaappplatform.platform.logging.encoder",
+		"type"  : "alias",
+		"highlight" : true
+	},
+	
+	"github.javaappplatform.platform.logging.encoder.alias":
+	{
+		"point" : "github.javaappplatform.platform.logging.encoder",
+		"type"  : "alias"
+	},
+	
+	"github.javaappplatform.platform.logging.appender.console":
+	{
+		"point" : "github.javaappplatform.platform.logging.appender",
+		"type"  : "console"
+	},
+
+	"github.javaappplatform.platform.logging.appender.file.simple":
+	{
+		"point"  : "github.javaappplatform.platform.logging.appender",
+		"type"   : "file",
+		"file"   : "jap.log",
+		"append" : false
+	},
+
+	"github.javaappplatform.platform.logging.appender.file.rolling":
+	{
+		"point" : "github.javaappplatform.platform.logging.appender",
+		"type"  : "file",
+		"filesize"    : "2MB",
+		"filepattern" : "%d{yyyy-MM-dd}.%i.log.zip",
+		"filecount"   : 30
+	},
+
+	/********* remove on plugin update - only here for compatibility reasons *********/
+	"github.javaappplatform.platform.commons.platform.loglevel" :
+	{
+		"point" : "github.javaappplatform.platform.option",
+		"name" : "loglevel",
+		"description" : "Deprecated: This option is no longer in use.",
+		"isRequired" : false,
+		"ArgName" : "deprecated - no longer in use",
+		"numOfArgs" : 1
+	}	
+}

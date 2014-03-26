@@ -52,7 +52,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 	@Override
 	public V put(K name, V data)
 	{
-		V old = container.put(name, data);
+		V old = this.container.put(name, data);
 		if (old == null)
 			this.postEvent(IObservableCollection.E_NEW_ELEMENT, name, data);
 		else if (!(data.equals(old)))
@@ -63,7 +63,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 	@Override
 	public V remove(Object name)
 	{
-		V removed = container.remove(name);
+		V removed = this.container.remove(name);
 		if (removed != null)
 			this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, name, removed);
 		return removed;
@@ -273,7 +273,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 		if (added.size() > 0)
 			this.postEvent(IObservableCollection.E_NEW_ELEMENTS, added);
 		if (updated.size() > 0)
-			this.postEvent(IObservableCollection.E_ELEMENT_UPDATED, updated);
+			this.postEvent(IObservableCollection.E_ELEMENTS_UPDATED, updated);
 	}
 
 	@Override

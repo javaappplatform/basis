@@ -56,7 +56,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 		if (old == null)
 			this.postEvent(IObservableCollection.E_NEW_ELEMENT, name, data);
 		else if (!(data.equals(old)))
-			this.postEvent(IObservableCollection.E_ELEMENT_UPDATED, name, old);
+			this.postEvent(IObservableCollection.E_UPDATED_ELEMENT, name, old);
 		return old;
 	}
 
@@ -122,7 +122,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 					public V setValue(V value)
 					{
 						V old = this.internal.setValue(value);
-						ObservableMap.this.postEvent(IObservableCollection.E_ELEMENT_UPDATED, this.internal.getKey(), old);
+						ObservableMap.this.postEvent(IObservableCollection.E_UPDATED_ELEMENT, this.internal.getKey(), old);
 						return old;
 					}
 
@@ -260,20 +260,28 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 	@Override
 	public void putAll(Map< ? extends K, ? extends V> m)
 	{
-		ArrayList<Object> added = new ArrayList<>();
-		ArrayList<Object> updated = new ArrayList<>();
+		ArrayList<Object> addedKeys = new ArrayList<>(m.size());
+		ArrayList<Object> addedValues = new ArrayList<>(m.size());
+		ArrayList<Object> updatedKeys = new ArrayList<>(m.size());
+		ArrayList<Object> updatedValues = new ArrayList<>(m.size());
 		for (Map.Entry< ? extends K, ? extends V> e : m.entrySet())
 		{
 			Object old = this.container.put(e.getKey(), e.getValue());
 			if (old == null)
-				added.add(e.getKey());
+			{
+				addedKeys.add(e.getKey());
+				addedValues.add(e.getValue());
+			}
 			else if (!old.equals(e.getValue()))
-				updated.add(e.getKey());
+			{
+				updatedKeys.add(e.getKey());
+				updatedValues.add(old);
+			}
 		}
-		if (added.size() > 0)
-			this.postEvent(IObservableCollection.E_NEW_ELEMENTS, added);
-		if (updated.size() > 0)
-			this.postEvent(IObservableCollection.E_ELEMENTS_UPDATED, updated);
+		if (addedKeys.size() > 0)
+			this.postEvent(IObservableCollection.E_NEW_ELEMENTS, addedKeys, addedValues);
+		if (updatedKeys.size() > 0)
+			this.postEvent(IObservableCollection.E_UPDATED_ELEMENTS, updatedKeys, updatedValues);
 	}
 
 	@Override
@@ -346,11 +354,11 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 	@Override
 	public void clear()
 	{
-		Iterator<Map.Entry<K, V>> iter = this.entrySet().iterator();
-		while (iter.hasNext())
+		if (this.container.size() > 0)
 		{
-			iter.next();
-			iter.remove();
+			this.container.clear();
+			this.postEvent(IObservableCollection.E_COLLECTION_CLEARED);
 		}
 	}
+
 }

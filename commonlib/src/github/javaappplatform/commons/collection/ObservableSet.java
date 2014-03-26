@@ -184,10 +184,11 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 	@Override
 	public void clear()
 	{
-		ArrayList<E> removed = new ArrayList<>(this.container);
-		this.container.clear();
-		if (removed.size() > 0)
-			this.postEvent(IObservableCollection.E_REMOVED_ELEMENTS, removed);
+		if (this.container.size() > 0)
+		{
+			this.container.clear();
+			this.postEvent(IObservableCollection.E_COLLECTION_CLEARED);
+		}
 	}
 
 }

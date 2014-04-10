@@ -13,6 +13,7 @@ import github.javaappplatform.commons.log.ClassRenamer;
 import github.javaappplatform.commons.log.Logger;
 import github.javaappplatform.commons.log.LoggerRenamer;
 import github.javaappplatform.commons.util.Arrays2;
+import github.javaappplatform.commons.util.GenericsToolkit;
 import github.javaappplatform.platform.extension.Extension;
 import github.javaappplatform.platform.extension.ExtensionRegistry;
 
@@ -52,20 +53,34 @@ public class LoggingTools
 {
 	
 	public static final String EP_ALIAS = "github.javaappplatform.platform.logging.Alias";
+	public static final String EP_LOGLEVEL = "github.javaappplatform.platform.logging.Level";
 	public static final String EP_LOGCONFIG = "github.javaappplatform.platform.logging.Config";
 
 	private static final Logger LOGGER = Logger.getLogger();
 	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd'_'Hmmss");
 
+
 	public static final void configureAliases()
 	{
-		SmallMap<String, String> aliases = new SmallMap<String, String>(15);
-
 		Collection<Extension> set = ExtensionRegistry.getExtensions(EP_ALIAS);
+		SmallMap<String, String> aliases = new SmallMap<String, String>(set.size());
+
 		for (Extension e : set)
 			aliases.put(e.getProperty("package").toString(), e.getProperty("substitute").toString());
 
 		ClassRenamer.addRuleset(aliases);
+	}
+
+	public static final void configureLevels()
+	{
+		Collection<Extension> set = ExtensionRegistry.getExtensions(EP_LOGLEVEL);
+		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+		for (Extension e : set)
+		{
+			ch.qos.logback.classic.Logger logger = context.getLogger(e.<String>getProperty("logger"));
+			logger.setLevel(Level.toLevel(e.<String>getProperty("level"), Level.INFO));
+			logger.setAdditive(e.getProperty("additive", true));
+		}
 	}
 
 
@@ -77,9 +92,10 @@ public class LoggingTools
 			LOGGER.severe("Could not find a logging configuration. Default configuration is used.");
 			return;
 		}
+		Extension ext = exts.iterator().next();
 		if (exts.size() > 1)
-			LOGGER.warn("Found several logging configurations. Will use " + exts.iterator().next().name);
-		configureLogging(exts.iterator().next());
+			LOGGER.warn("Found several logging configurations. Will use " + ext.name);
+		configureLogging(ext);
 	}
 
 	public static final void configureLogging(String logConfig)
@@ -186,10 +202,10 @@ public class LoggingTools
 					case F_TIME | F_SIZE:
 					case F_TIME | F_SIZE | F_FILECOUNT:
 						rolling = new TimeBasedRollingPolicy<>();
-						SizeAndTimeBasedFNATP<ILoggingEvent> sizeandtime = new SizeAndTimeBasedFNATP<ILoggingEvent>();
+						SizeAndTimeBasedFNATP<ILoggingEvent> sizeandtime = new SizeAndTimeBasedFNATP<>();
 						sizeandtime.setMaxFileSize(ext.getProperty("filesize", "10MB"));
-						sizeandtime.setTimeBasedRollingPolicy((TimeBasedRollingPolicy<ILoggingEvent>) rolling);
-						((TimeBasedRollingPolicy<ILoggingEvent>) rolling).setTimeBasedFileNamingAndTriggeringPolicy(sizeandtime);
+						sizeandtime.setTimeBasedRollingPolicy(GenericsToolkit.convertUnchecked(rolling));
+						GenericsToolkit.<TimeBasedRollingPolicy<ILoggingEvent>>convertUnchecked(rolling).setTimeBasedFileNamingAndTriggeringPolicy(sizeandtime);
 						((TimeBasedRollingPolicy) rolling).setFileNamePattern(ext.getProperty("filepattern", "%d{yyyy-MM-dd}.%i.log.zip"));
 						if (flags == (F_TIME | F_SIZE | F_FILECOUNT))
 							((TimeBasedRollingPolicy) rolling).setMaxHistory(ext.getProperty("filecount", 10));
@@ -239,6 +255,7 @@ public class LoggingTools
 				ClassRenamer.addRule("github.javaappplatform", "+[jap]");
 				ClassRenamer.addRule("github.javaappplatform.commons", "+[com]");
 				configureAliases();
+				configureLevels();
 				
 				PatternLayoutEncoder pl = new PatternLayoutEncoder();
 				if (!ext.getProperty("highlight", false))

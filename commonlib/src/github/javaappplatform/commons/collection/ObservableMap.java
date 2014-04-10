@@ -56,7 +56,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 		if (old == null)
 			this.postEvent(IObservableCollection.E_NEW_ELEMENT, name, data);
 		else if (!(data.equals(old)))
-			this.postEvent(IObservableCollection.E_UPDATED_ELEMENT, name, old);
+			this.postEvent(IObservableCollection.E_UPDATED_ELEMENT, name, old, data);
 		return old;
 	}
 
@@ -122,7 +122,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 					public V setValue(V value)
 					{
 						V old = this.internal.setValue(value);
-						ObservableMap.this.postEvent(IObservableCollection.E_UPDATED_ELEMENT, this.internal.getKey(), old);
+						ObservableMap.this.postEvent(IObservableCollection.E_UPDATED_ELEMENT, this.internal.getKey(), old, this.internal.getValue());
 						return old;
 					}
 
@@ -276,12 +276,13 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 			{
 				updatedKeys.add(e.getKey());
 				updatedValues.add(old);
+				addedValues.add(e.getValue());
 			}
 		}
 		if (addedKeys.size() > 0)
 			this.postEvent(IObservableCollection.E_NEW_ELEMENTS, addedKeys, addedValues);
 		if (updatedKeys.size() > 0)
-			this.postEvent(IObservableCollection.E_UPDATED_ELEMENTS, updatedKeys, updatedValues);
+			this.postEvent(IObservableCollection.E_UPDATED_ELEMENTS, updatedKeys, updatedValues, addedValues);
 	}
 
 	@Override

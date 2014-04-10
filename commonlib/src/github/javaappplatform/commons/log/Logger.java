@@ -37,11 +37,6 @@ public class Logger
 	private boolean assertsEnabled = false;
 
 	
-	static
-	{
-		configureDefault();
-	}
-	
 	public static final void configureDefault()
 	{
 		try

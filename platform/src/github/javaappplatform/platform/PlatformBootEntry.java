@@ -26,6 +26,7 @@ public class PlatformBootEntry implements IBootEntry
 		if (logconfig == null)
 		{
 			LoggingTools.configureAliases();
+			LoggingTools.configureLevels();
 			return;
 		}
 		LoggingTools.configureLogging(logconfig);

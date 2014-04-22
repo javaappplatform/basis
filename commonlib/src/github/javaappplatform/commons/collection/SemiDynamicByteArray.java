@@ -66,17 +66,29 @@ public class SemiDynamicByteArray
 		this.size = Math.max(this.size, this.cursor);
 	}
 
-	public void putAll(byte[] value)
+	public void putAt(byte value, int position)
 	{
-		this.ensureCapacity(this.cursor + value.length);
+		this.cursor(position);
+		this.put(value);
+	}
 
-		int stillToAppend = value.length;
+	public void putAt(byte[] value, int off, int len, int position)
+	{
+		this.cursor(position);
+		this.put(value, off, len);
+	}
+
+	public void put(byte[] value, int off, int len)
+	{
+		this.ensureCapacity(this.cursor + len);
+
+		int stillToAppend = len;
 		while (stillToAppend > 0)
 		{
 			final int leftSpace = this.list.get(this.current).length - this.pointer;
 			final int toCopy = Math.min(stillToAppend, leftSpace);
 			if (toCopy > 0)
-				System.arraycopy(value, value.length - stillToAppend, this.list.get(this.current), this.pointer, toCopy);
+				System.arraycopy(value, off + len - stillToAppend, this.list.get(this.current), this.pointer, toCopy);
 			this.pointer += toCopy;
 			stillToAppend -= toCopy;
 			if (stillToAppend > 0)
@@ -85,8 +97,13 @@ public class SemiDynamicByteArray
 				this.pointer = 0;
 			}
 		}
-		this.cursor += value.length;
+		this.cursor += len;
 		this.size = Math.max(this.size, this.cursor);
+	}
+
+	public void putAll(byte[] value)
+	{
+		this.put(value, 0, value.length);
 	}
 
 	public void putAll(ByteBuffer value)
@@ -229,6 +246,12 @@ public class SemiDynamicByteArray
 		return this.cursor;
 	}
 
+	public byte getDateFrom(int position)
+	{
+		this.cursor(position);
+		return this.getDate();
+	}
+
 	public byte getDate()
 	{
 		if (this.cursor == this.size)
@@ -241,27 +264,29 @@ public class SemiDynamicByteArray
 		return this.list.get(this.current)[this.pointer];
 	}
 
-	public void getData(byte[] dest)
+	public byte[] getDataFrom(byte[] dest, int position)
 	{
-		this.getData(dest, 0, dest.length);
+		this.cursor(position);
+		return this.getData(dest);
 	}
 
-	public void getData(byte[] dest, int destOffset, int length)
+	public byte[] getData(byte[] dest)
 	{
-		if (this.cursor+length > this.size)
-			throw new IllegalArgumentException("Requested position ["+this.cursor+"] + dest.length ["+length+"] >= size of this array ["+this.size+"]");
+		if (this.cursor+dest.length > this.size)
+			throw new IllegalArgumentException("Requested position ["+this.cursor+"] + dest.length ["+dest.length+"] >= size of this array ["+this.size+"]");
 
 		int i = this.current;
-		int toCopy = Math.min(this.list.get(i).length-this.pointer, length);
-		System.arraycopy(this.list.get(i), this.pointer, dest, destOffset, toCopy);
+		int toCopy = Math.min(this.list.get(i).length-this.pointer, dest.length);
+		System.arraycopy(this.list.get(i), this.pointer, dest, 0, toCopy);
 		int pos = toCopy;
-		while (pos < length)
+		while (pos < dest.length)
 		{
 			i++;
-			toCopy = Math.min(this.list.get(i).length, length - pos);
-			System.arraycopy(this.list.get(i), 0, dest, destOffset+pos, toCopy);
+			toCopy = Math.min(this.list.get(i).length, dest.length - pos);
+			System.arraycopy(this.list.get(i), 0, dest, pos, toCopy);
 			pos += toCopy;
 		}
+		return dest;
 	}
 
 	public byte[] getData()
@@ -288,19 +313,20 @@ public class SemiDynamicByteArray
 
 	public void readData(byte[] dest)
 	{
-		this.readData(dest, 0, dest.length);
-	}
-
-	public void readData(byte[] dest, int destOffset, int length)
-	{
-		this.getData(dest, destOffset, length);
-		this.moveCursor(length);
+		this.getData(dest);
+		this.moveCursor(dest.length);
 	}
 
 	@Deprecated
 	public List<byte[]> getRAWData()
 	{
 		return Collections.unmodifiableList(this.list);
+	}
+	
+	public void ensureSize(int size)
+	{
+		this.ensureCapacity(size);
+		this.size = Math.max(this.size, size);
 	}
 
 	public int size()

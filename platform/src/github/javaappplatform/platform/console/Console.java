@@ -8,6 +8,9 @@
 */
 package github.javaappplatform.platform.console;
 
+import github.javaappplatform.platform.PlatformException;
+import github.javaappplatform.platform.boot.IBootEntry;
+import github.javaappplatform.platform.extension.Extension;
 import github.javaappplatform.platform.job.ADoJob;
 
 import java.io.BufferedReader;
@@ -18,7 +21,7 @@ import java.io.InputStreamReader;
  * TODO javadoc
  * @author funsheep
  */
-public class Console extends ADoJob
+public class Console extends ADoJob implements IBootEntry
 {
 
 	private BufferedReader console_reader = new BufferedReader(new InputStreamReader(System.in));
@@ -53,6 +56,16 @@ public class Console extends ADoJob
 				this.console_reader = new BufferedReader(new InputStreamReader(System.in));	//try again!
 			}
 		}
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void startup(Extension e) throws PlatformException
+	{
+		this.schedule(e);
 	}
 
 }

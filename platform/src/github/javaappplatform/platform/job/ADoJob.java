@@ -8,6 +8,8 @@
 */
 package github.javaappplatform.platform.job;
 
+import github.javaappplatform.platform.extension.Extension;
+
 
 
 
@@ -27,6 +29,14 @@ public abstract class ADoJob implements IJob, IDoJob
 		this.name = name;
 	}
 
+	
+	public final void schedule(Extension e)
+	{
+		final long delay = e.getProperty("delay", 0);
+		final boolean loop  = e.getProperty("loop", false);
+		final String thread = e.getProperty("thread", JobPlatform.MAIN_THREAD);
+		this.schedule(thread, loop, delay);
+	}
 
 	public void schedule(String thread, boolean loop, long delay)
 	{

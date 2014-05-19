@@ -55,13 +55,6 @@
 		"singleton" : true
 	},
 
-	"github.javaappplatform.platform.boot.InitialJobStart" :
-	{
-		"point" : "github.javaappplatform.platform.boot",
-		"class" : "github.javaappplatform.platform.boot.InitialJobStart",
-		"singleton" : true
-	},
-
 	"github.javaappplatform.platform.alias" :
 	{
 		"point" : "github.javaappplatform.platform.logging.Alias",

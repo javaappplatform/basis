@@ -10,7 +10,7 @@
 
 	"github.javaappplatform.platform.console.Console" :
 	{
-		"point" : "github.javaappplatform.platform.boot.job",
+		"point" : "github.javaappplatform.platform.boot",
 		"class" : "github.javaappplatform.platform.console.Console",
 		"thread" : "Console Thread",
 		"singleton" : true

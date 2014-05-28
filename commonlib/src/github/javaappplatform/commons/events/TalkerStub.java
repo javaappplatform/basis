@@ -66,15 +66,6 @@ public class TalkerStub implements ITalker, IInnerTalker
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void addListener(int type, IListener listener)
-	{
-		this.addListener(type, listener, PRIORITY_NORMAL);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void addListener(int type, IListener listener, int priority)
 	{
 		if (this.sets == null)

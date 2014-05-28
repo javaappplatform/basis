@@ -32,15 +32,6 @@ public class SyncedTalkerStub extends TalkerStub
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void addListener(int type, IListener listener)
-	{
-		super.addListener(type, listener);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public synchronized void addListener(int type, IListener listener, int priority)
 	{
 		super.addListener(type, listener, priority);

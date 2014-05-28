@@ -30,7 +30,10 @@ public interface ITalker
 	 * @param type The event type to listen to.
 	 * @param listener The listener.
 	 */
-	public void addListener(int type, IListener listener);
+	public default void addListener(int type, IListener listener)
+	{
+		this.addListener(type, listener, PRIORITY_NORMAL);
+	}
 
 	/**
 	 * Hooks a listener (with the given priority) up for the given event type. It does not matter if the listener already

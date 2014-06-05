@@ -51,4 +51,7 @@ public class PlatformException extends Exception
 		// TODO Auto-generated constructor stub
 	}
 
+	/** */
+	private static final long serialVersionUID = -1626993291858279557L;
+
 }

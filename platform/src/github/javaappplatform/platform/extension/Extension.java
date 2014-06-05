@@ -13,6 +13,8 @@ import github.javaappplatform.commons.log.Logger;
 import github.javaappplatform.commons.util.Arrays2;
 import github.javaappplatform.commons.util.GenericsToolkit;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
 
@@ -160,30 +162,28 @@ public class Extension
 		if (singleton != null && singleton.booleanValue())
 		{
 			if (this.service == null)
-				try
-				{
-					this.service = this.clazz.newInstance();
-					if (this.service instanceof IService)
-						((IService) this.service).init(this);
-				} catch (InstantiationException e)
-				{
-					throw new ServiceInstantiationException("Could not instanciate requested service.", e);
-				} catch (IllegalAccessException e)
-				{
-					throw new ServiceInstantiationException("Could not instanciate requested service.", e);
-				}
+				this.service = this.instantiateService();
 			return GenericsToolkit.<O>convertUnchecked(this.service);
 		}
+		
+		return this.instantiateService();
+	}
+	
+	private final <O> O instantiateService() throws ServiceInstantiationException
+	{
 		try
 		{
-			final Object o = this.clazz.newInstance();
-			if (o instanceof IService)
-				((IService) o).init(this);
-			return GenericsToolkit.<O>convertUnchecked(o);
-		} catch (InstantiationException e)
-		{
-			throw new ServiceInstantiationException("Could not instanciate requested service.", e);
-		} catch (IllegalAccessException e)
+			try
+			{
+				Constructor<?> con = this.clazz.getConstructor(Extension.class);
+				return GenericsToolkit.convertUnchecked(con.newInstance(this));
+			}
+			catch (NoSuchMethodException ex)
+			{
+				return GenericsToolkit.convertUnchecked(this.clazz.newInstance());
+			}
+		}
+		catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
 		{
 			throw new ServiceInstantiationException("Could not instanciate requested service.", e);
 		}

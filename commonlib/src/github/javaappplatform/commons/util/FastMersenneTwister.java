@@ -124,6 +124,7 @@ import java.io.Serializable;
 // on the code, I strongly suggest looking at MersenneTwister.java first.
 // -- Sean
 
+@SuppressWarnings({ "unqualified-field-access", "cast" })
 public class FastMersenneTwister implements Serializable, Cloneable
 {
 	// Period parameters

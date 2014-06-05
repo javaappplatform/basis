@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.io.Serializable;
 
 /**
- * <h3>MersenneTwister and MTFastRNG</h3>
+ * <h3>MersenneTwister and MersenneTwisterFast</h3>
  * <p>
- * <b>Version 13</b>, based on version MT199937(99/10/29) of the Mersenne Twister algorithm found at
+ * <b>Version 20</b>, based on version MT199937(99/10/29) of the Mersenne Twister algorithm found at
  * <a href="http://www.math.keio.ac.jp/matumoto/emt.html"> The Mersenne Twister Home Page</a>, with
  * the initialization improved using the new 2002/1/26 initialization algorithm By Sean Luke,
  * October 2004.
@@ -17,12 +17,13 @@ import java.io.Serializable;
  * synchronized and can be used in a multithreaded environment. On modern VMs such as HotSpot, it is
  * approximately 1/3 slower than java.util.Random.
  * <p>
- * <b>MTFastRNG</b> is not a subclass of java.util.Random. It has the same public methods as Random
- * does, however, and it is algorithmically identical to MersenneTwister. MTFastRNG has hard-code
- * inlined all of its methods directly, and made all of them final (well, the ones of consequence
- * anyway). Further, these methods are <i>not</i> synchronized, so the same MTFastRNG instance
- * cannot be shared by multiple threads. But all this helps MTFastRNG achieve well over twice the
- * speed of MersenneTwister. java.util.Random is about 1/3 slower than MTFastRNG.
+ * <b>MersenneTwisterFast</b> is not a subclass of java.util.Random. It has the same public methods
+ * as Random does, however, and it is algorithmically identical to MersenneTwister.
+ * MersenneTwisterFast has hard-code inlined all of its methods directly, and made all of them final
+ * (well, the ones of consequence anyway). Further, these methods are <i>not</i> synchronized, so
+ * the same MersenneTwisterFast instance cannot be shared by multiple threads. But all this helps
+ * MersenneTwisterFast achieve well over twice the speed of MersenneTwister. java.util.Random is
+ * about 1/3 slower than MersenneTwisterFast.
  * <h3>About the Mersenne Twister</h3>
  * <p>
  * This is a Java version of the C-program for MT19937: Integer version. The MT19937 algorithm was
@@ -35,12 +36,33 @@ import java.io.Serializable;
  * Computer Simulation,</i> Vol. 8, No. 1, January 1998, pp 3--30.
  * <h3>About this Version</h3>
  * <p>
+ * <b>Changes since V19:</b> nextFloat(boolean, boolean) now returns float, not double.
+ * <p>
+ * <b>Changes since V18:</b> Removed old final declarations, which used to potentially speed up the
+ * code, but no longer.
+ * <p>
+ * <b>Changes since V17:</b> Removed vestigial references to &= 0xffffffff which stemmed from the
+ * original C code. The C code could not guarantee that ints were 32 bit, hence the masks. The
+ * vestigial references in the Java code were likely optimized out anyway.
+ * <p>
+ * <b>Changes since V16:</b> Added nextDouble(includeZero, includeOne) and nextFloat(includeZero,
+ * includeOne) to allow for half-open, fully-closed, and fully-open intervals.
+ * <p>
+ * <b>Changes Since V15:</b> Added serialVersionUID to quiet compiler warnings from Sun's overly
+ * verbose compilers as of JDK 1.5.
+ * <p>
+ * <b>Changes Since V14:</b> made strictfp, with StrictMath.log and StrictMath.sqrt in nextGaussian
+ * instead of Math.log and Math.sqrt. This is largely just to be safe, as it presently makes no
+ * difference in the speed, correctness, or results of the algorithm.
+ * <p>
+ * <b>Changes Since V13:</b> clone() method CloneNotSupportedException removed.
+ * <p>
  * <b>Changes Since V12:</b> clone() method added.
  * <p>
- * <b>Changes Since V11:</b> stateEquals(...) method added. MTFastRNG is equal to other MTFastRNGs
- * with identical state; likewise MersenneTwister is equal to other MersenneTwister with identical
- * state. This isn't equals(...) because that requires a contract of immutability to compare by
- * value.
+ * <b>Changes Since V11:</b> stateEquals(...) method added. MersenneTwisterFast is equal to other
+ * MersenneTwisterFasts with identical state; likewise MersenneTwister is equal to other
+ * MersenneTwister with identical state. This isn't equals(...) because that requires a contract of
+ * immutability to compare by value.
  * <p>
  * <b>Changes Since V10:</b> A documentation error suggested that setSeed(int[]) required an int[]
  * array 624 long. In fact, the array can be any non-zero length. The new version also checks for
@@ -51,16 +73,16 @@ import java.io.Serializable;
  * <b>Changes Since V8:</b> setSeed(int) was only using the first 28 bits of the seed; it should
  * have been 32 bits. For small-number seeds the behavior is identical.
  * <p>
- * <b>Changes Since V7:</b> A documentation error in MTFastRNG (but not MersenneTwister) stated that
- * nextDouble selects uniformly from the full-open interval [0,1]. It does not. nextDouble's
- * contract is identical across MTFastRNG, MersenneTwister, and java.util.Random, namely, selection
- * in the half-open interval [0,1). That is, 1.0 should not be returned. A similar contract exists
- * in nextFloat.
+ * <b>Changes Since V7:</b> A documentation error in MersenneTwisterFast (but not MersenneTwister)
+ * stated that nextDouble selects uniformly from the full-open interval [0,1]. It does not.
+ * nextDouble's contract is identical across MersenneTwisterFast, MersenneTwister, and
+ * java.util.Random, namely, selection in the half-open interval [0,1). That is, 1.0 should not be
+ * returned. A similar contract exists in nextFloat.
  * <p>
  * <b>Changes Since V6:</b> License has changed from LGPL to BSD. New timing information to compare
  * against java.util.Random. Recent versions of HotSpot have helped Random increase in speed to the
- * point where it is faster than MersenneTwister but slower than MTFastRNG (which should be the
- * case, as it's a less complex algorithm but is synchronized).
+ * point where it is faster than MersenneTwister but slower than MersenneTwisterFast (which should
+ * be the case, as it's a less complex algorithm but is synchronized).
  * <p>
  * <b>Changes Since V5:</b> New empty constructor made to work the same as java.util.Random --
  * namely, it seeds based on the current time in milliseconds.
@@ -87,8 +109,8 @@ import java.io.Serializable;
  * if your seed does not exceed the int range.
  * <p>
  * MersenneTwister can be used reliably on JDK version 1.1.5 or above. Earlier Java versions have
- * serious bugs in java.util.Random; only MTFastRNG (and not MersenneTwister nor java.util.Random)
- * should be used with them.
+ * serious bugs in java.util.Random; only MersenneTwisterFast (and not MersenneTwister nor
+ * java.util.Random) should be used with them.
  * <h3>License</h3> Copyright (c) 2003 by Sean Luke. <br>
  * Portions copyright (c) 1993 by Michael Lecuyer. <br>
  * All rights reserved. <br>
@@ -115,7 +137,7 @@ import java.io.Serializable;
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
  * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @version 13
+ * @version 20
  */
 
 // Note: this class is hard-inlined in all of its methods. This makes some of
@@ -124,9 +146,12 @@ import java.io.Serializable;
 // on the code, I strongly suggest looking at MersenneTwister.java first.
 // -- Sean
 
-@SuppressWarnings({ "unqualified-field-access", "cast" })
-public class FastMersenneTwister implements Serializable, Cloneable
+@SuppressWarnings({ "cast", "unqualified-field-access" })
+public strictfp class FastMersenneTwister implements Serializable, Cloneable
 {
+	// Serialization
+	private static final long serialVersionUID = -8219700664442619525L; // locked as of Version 15
+
 	// Period parameters
 	private static final int N = 624;
 	private static final int M = 397;
@@ -150,12 +175,19 @@ public class FastMersenneTwister implements Serializable, Cloneable
 
 	/* We're overriding all internal data, to my knowledge, so this should be okay */
 	@Override
-	public Object clone() throws CloneNotSupportedException
+	public Object clone()
 	{
-		FastMersenneTwister f = (FastMersenneTwister)(super.clone());
-		f.mt = (int[])(mt.clone());
-		f.mag01 = (int[])(mag01.clone());
-		return f;
+		try
+		{
+			FastMersenneTwister f = (FastMersenneTwister)(super.clone());
+			f.mt = (int[])(mt.clone());
+			f.mag01 = (int[])(mag01.clone());
+			return f;
+		}
+		catch (CloneNotSupportedException e)
+		{
+			throw new InternalError();
+		} // should never happen
 	}
 
 	public boolean stateEquals(Object o)
@@ -220,7 +252,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * Constructor using a given seed. Though you pass this seed in as a long, it's best to make
 	 * sure it's actually an integer.
 	 */
-	public FastMersenneTwister(final long seed)
+	public FastMersenneTwister(long seed)
 	{
 		setSeed(seed);
 	}
@@ -230,7 +262,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * the first 624 integers in the array are used; if the array is shorter than this then integers
 	 * are repeatedly used in a wrap-around fashion.
 	 */
-	public FastMersenneTwister(final int[] array)
+	public FastMersenneTwister(int[] array)
 	{
 		setSeed(array);
 	}
@@ -240,7 +272,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * (Mersenne Twister only uses the first 32 bits for its seed).
 	 */
 
-	synchronized public void setSeed(final long seed)
+	synchronized public void setSeed(long seed)
 	{
 		// Due to a bug in java.util.Random clear up to 1.2, we're
 		// doing our own Gaussian variable.
@@ -260,7 +292,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 			/* In the previous versions, MSBs of the seed affect */
 			/* only MSBs of the array mt[]. */
 			/* 2002/01/09 modified by Makoto Matsumoto */
-			mt[mti] &= 0xffffffff;
+			// mt[mti] &= 0xffffffff;
 			/* for >32 bit machines */
 		}
 	}
@@ -271,7 +303,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * than this then integers are repeatedly used in a wrap-around fashion.
 	 */
 
-	synchronized public void setSeed(final int[] array)
+	synchronized public void setSeed(int[] array)
 	{
 		if (array.length == 0)
 			throw new IllegalArgumentException("Array length must be greater than zero");
@@ -286,7 +318,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 																							 * non
 																							 * linear
 																							 */
-			mt[i] &= 0xffffffff; /* for WORDSIZE > 32 machines */
+			// mt[i] &= 0xffffffff; /* for WORDSIZE > 32 machines */
 			i++;
 			j++;
 			if (i >= N)
@@ -300,7 +332,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		for (k = N - 1; k != 0; k--)
 		{
 			mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >>> 30)) * 1566083941)) - i; /* non linear */
-			mt[i] &= 0xffffffff; /* for WORDSIZE > 32 machines */
+			// mt[i] &= 0xffffffff; /* for WORDSIZE > 32 machines */
 			i++;
 			if (i >= N)
 			{
@@ -311,7 +343,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		mt[0] = 0x80000000; /* MSB is 1; assuring non-zero initial array */
 	}
 
-	public final int nextInt()
+	public int nextInt()
 	{
 		int y;
 
@@ -346,7 +378,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		return y;
 	}
 
-	public final short nextShort()
+	public short nextShort()
 	{
 		int y;
 
@@ -381,7 +413,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		return (short)(y >>> 16);
 	}
 
-	public final char nextChar()
+	public char nextChar()
 	{
 		int y;
 
@@ -416,7 +448,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		return (char)(y >>> 16);
 	}
 
-	public final boolean nextBoolean()
+	public boolean nextBoolean()
 	{
 		int y;
 
@@ -458,7 +490,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * remember you may need to cast to float first.
 	 */
 
-	public final boolean nextBoolean(final float probability)
+	public boolean nextBoolean(float probability)
 	{
 		int y;
 
@@ -504,7 +536,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * returning false. <tt>probability</tt> must be between 0.0 and 1.0, inclusive.
 	 */
 
-	public final boolean nextBoolean(final double probability)
+	public boolean nextBoolean(double probability)
 	{
 		int y;
 		int z;
@@ -575,7 +607,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		return ((((long)(y >>> 6)) << 27) + (z >>> 5)) / (double)(1L << 53) < probability;
 	}
 
-	public final byte nextByte()
+	public byte nextByte()
 	{
 		int y;
 
@@ -610,7 +642,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		return (byte)(y >>> 24);
 	}
 
-	public final void nextBytes(byte[] bytes)
+	public void nextBytes(byte[] bytes)
 	{
 		int y;
 
@@ -648,7 +680,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		}
 	}
 
-	public final long nextLong()
+	public long nextLong()
 	{
 		int y;
 		int z;
@@ -716,10 +748,10 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * Returns a long drawn uniformly from 0 to n-1. Suffice it to say, n must be > 0, or an
 	 * IllegalArgumentException is raised.
 	 */
-	public final long nextLong(final long n)
+	public long nextLong(long n)
 	{
 		if (n <= 0)
-			throw new IllegalArgumentException("n must be > 0");
+			throw new IllegalArgumentException("n must be positive, got: " + n);
 
 		long bits, val;
 		do
@@ -793,7 +825,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * Returns a random double in the half-open range from [0.0,1.0). Thus 0.0 is a valid result but
 	 * 1.0 is not.
 	 */
-	public final double nextDouble()
+	public double nextDouble()
 	{
 		int y;
 		int z;
@@ -858,13 +890,51 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		return ((((long)(y >>> 6)) << 27) + (z >>> 5)) / (double)(1L << 53);
 	}
 
-	public final double nextGaussian()
+	/**
+	 * Returns a double in the range from 0.0 to 1.0, possibly inclusive of 0.0 and 1.0 themselves.
+	 * Thus:
+	 * <p>
+	 * <table border=0>
+	 * <th>
+	 * <td>Expression
+	 * <td>Interval
+	 * <tr>
+	 * <td>nextDouble(false, false)
+	 * <td>(0.0, 1.0)
+	 * <tr>
+	 * <td>nextDouble(true, false)
+	 * <td>[0.0, 1.0)
+	 * <tr>
+	 * <td>nextDouble(false, true)
+	 * <td>(0.0, 1.0]
+	 * <tr>
+	 * <td>nextDouble(true, true)
+	 * <td>[0.0, 1.0]
+	 * </table>
+	 * <p>
+	 * This version preserves all possible random values in the double range.
+	 */
+	public double nextDouble(boolean includeZero, boolean includeOne)
+	{
+		double d = 0.0;
+		do
+		{
+			d = nextDouble(); // grab a value, initially from half-open [0.0, 1.0)
+			if (includeOne && nextBoolean())
+				d += 1.0; // if includeOne, with 1/2 probability, push to [1.0, 2.0)
+		} while ((d > 1.0) || // everything above 1.0 is always invalid
+			(!includeZero && d == 0.0)); // if we're not including zero, 0.0 is invalid
+		return d;
+	}
+
+	public double nextGaussian()
 	{
 		if (__haveNextNextGaussian)
 		{
 			__haveNextNextGaussian = false;
 			return __nextNextGaussian;
 		}
+
 		double v1, v2, s;
 		do
 		{
@@ -990,7 +1060,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 			v2 = 2 * (((((long)(a >>> 6)) << 27) + (b >>> 5)) / (double)(1L << 53)) - 1;
 			s = v1 * v1 + v2 * v2;
 		} while (s >= 1 || s == 0);
-		double multiplier = /* Strict */Math.sqrt(-2 * /* Strict */Math.log(s) / s);
+		double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s) / s);
 		__nextNextGaussian = v2 * multiplier;
 		__haveNextNextGaussian = true;
 		return v1 * multiplier;
@@ -1000,7 +1070,7 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	 * Returns a random float in the half-open range from [0.0f,1.0f). Thus 0.0f is a valid result
 	 * but 1.0f is not.
 	 */
-	public final float nextFloat()
+	public float nextFloat()
 	{
 		int y;
 
@@ -1036,13 +1106,50 @@ public class FastMersenneTwister implements Serializable, Cloneable
 	}
 
 	/**
+	 * Returns a float in the range from 0.0f to 1.0f, possibly inclusive of 0.0f and 1.0f
+	 * themselves. Thus:
+	 * <p>
+	 * <table border=0>
+	 * <th>
+	 * <td>Expression
+	 * <td>Interval
+	 * <tr>
+	 * <td>nextFloat(false, false)
+	 * <td>(0.0f, 1.0f)
+	 * <tr>
+	 * <td>nextFloat(true, false)
+	 * <td>[0.0f, 1.0f)
+	 * <tr>
+	 * <td>nextFloat(false, true)
+	 * <td>(0.0f, 1.0f]
+	 * <tr>
+	 * <td>nextFloat(true, true)
+	 * <td>[0.0f, 1.0f]
+	 * </table>
+	 * <p>
+	 * This version preserves all possible random values in the float range.
+	 */
+	public float nextFloat(boolean includeZero, boolean includeOne)
+	{
+		float d = 0.0f;
+		do
+		{
+			d = nextFloat(); // grab a value, initially from half-open [0.0f, 1.0f)
+			if (includeOne && nextBoolean())
+				d += 1.0f; // if includeOne, with 1/2 probability, push to [1.0f, 2.0f)
+		} while ((d > 1.0f) || // everything above 1.0f is always invalid
+			(!includeZero && d == 0.0f)); // if we're not including zero, 0.0f is invalid
+		return d;
+	}
+
+	/**
 	 * Returns an integer drawn uniformly from 0 to n-1. Suffice it to say, n must be > 0, or an
 	 * IllegalArgumentException is raised.
 	 */
-	public final int nextInt(final int n)
+	public int nextInt(int n)
 	{
 		if (n <= 0)
-			throw new IllegalArgumentException("n must be > 0");
+			throw new IllegalArgumentException("n must be positive, got: " + n);
 
 		if ((n & -n) == n) // i.e., n is a power of 2
 		{
@@ -1117,8 +1224,5 @@ public class FastMersenneTwister implements Serializable, Cloneable
 		} while (bits - val + (n - 1) < 0);
 		return val;
 	}
-
-	/** */
-	private static final long serialVersionUID = -8514272944760351540L;
 
 }

@@ -21,7 +21,7 @@ import java.util.TreeMap;
  * @author cgrote
  * @author renken
  */
-public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
+public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>, IObservableMap<K, V>
 {
 
 	private final Map<K, V> container;
@@ -54,9 +54,9 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 	{
 		V old = this.container.put(name, data);
 		if (old == null)
-			this.postEvent(IObservableCollection.E_NEW_ELEMENT, name, data);
+			this.postEvent(IObservableCollection.EVENT_NEW_ELEMENT, name, data);
 		else if (!(data.equals(old)))
-			this.postEvent(IObservableCollection.E_UPDATED_ELEMENT, name, old, data);
+			this.postEvent(IObservableCollection.EVENT_UPDATED_ELEMENT, name, old, data);
 		return old;
 	}
 
@@ -65,7 +65,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 	{
 		V removed = this.container.remove(name);
 		if (removed != null)
-			this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, name, removed);
+			this.postEvent(IObservableCollection.EVENT_REMOVED_ELEMENT, name, removed);
 		return removed;
 	}
 
@@ -122,7 +122,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 					public V setValue(V value)
 					{
 						V old = this.internal.setValue(value);
-						ObservableMap.this.postEvent(IObservableCollection.E_UPDATED_ELEMENT, this.internal.getKey(), old, this.internal.getValue());
+						ObservableMap.this.postEvent(IObservableCollection.EVENT_UPDATED_ELEMENT, this.internal.getKey(), old, this.internal.getValue());
 						return old;
 					}
 
@@ -136,7 +136,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 					if (this.set.remove(o))
 					{
 						Map.Entry<K, V> e = GenericsToolkit.<Map.Entry<K, V>>convertUnchecked(o);
-						ObservableMap.this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, e.getKey(), e.getValue());
+						ObservableMap.this.postEvent(IObservableCollection.EVENT_REMOVED_ELEMENT, e.getKey(), e.getValue());
 						return true;
 					}
 					return false;
@@ -170,7 +170,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 								this.internal.remove();
 								java.util.Map.Entry<K, V> e = this.last;
 								this.last = null;
-								ObservableMap.this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, e.getKey(), e.getValue());
+								ObservableMap.this.postEvent(IObservableCollection.EVENT_REMOVED_ELEMENT, e.getKey(), e.getValue());
 							}
 						};
 				}
@@ -236,7 +236,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 						V lv = this.lastValue;
 						this.lastKey = null;
 						this.lastValue = null;
-						ObservableMap.this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, lk, lv);
+						ObservableMap.this.postEvent(IObservableCollection.EVENT_REMOVED_ELEMENT, lk, lv);
 					}
 				};
 	        }
@@ -286,9 +286,9 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 			}
 		}
 		if (addedKeys.size() > 0)
-			this.postEvent(IObservableCollection.E_NEW_ELEMENTS, addedKeys, addedValues);
+			this.postEvent(IObservableCollection.EVENT_NEW_ELEMENTS, addedKeys, addedValues);
 		if (updatedKeys.size() > 0)
-			this.postEvent(IObservableCollection.E_UPDATED_ELEMENTS, updatedKeys, updatedValues, addedValues);
+			this.postEvent(IObservableCollection.EVENT_UPDATED_ELEMENTS, updatedKeys, updatedValues, addedValues);
 	}
 
 	@Override
@@ -333,7 +333,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 						this.iter.remove();
 						Map.Entry<K, V> e = this.last;
 						this.last = e;
-						ObservableMap.this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, e.getKey(), e.getValue());
+						ObservableMap.this.postEvent(IObservableCollection.EVENT_REMOVED_ELEMENT, e.getKey(), e.getValue());
 					}
 				};
 	        }
@@ -369,7 +369,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 		if (this.container.size() > 0)
 		{
 			this.container.clear();
-			this.postEvent(IObservableCollection.E_COLLECTION_CLEARED);
+			this.postEvent(IObservableCollection.EVENT_COLLECTION_CLEARED);
 		}
 	}
 

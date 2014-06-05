@@ -4,8 +4,6 @@
  */
 package github.javaappplatform.commons.collection;
 
-import java.util.Collection;
-
 import github.javaappplatform.commons.events.ITalker;
 import github.javaappplatform.commons.util.StringID;
 
@@ -13,15 +11,15 @@ import github.javaappplatform.commons.util.StringID;
  * @author funsheep
  *
  */
-public interface IObservableCollection<E> extends ITalker, Collection<E>
+public interface IObservableCollection extends ITalker
 {
 
-	public static final int E_NEW_ELEMENT = StringID.id("E_NEW_ELEMENT");
-	public static final int E_NEW_ELEMENTS = StringID.id("E_NEW_ELEMENTS");
-	public static final int E_UPDATED_ELEMENT = StringID.id("E_ELEMENT_UPDATED");
-	public static final int E_UPDATED_ELEMENTS = StringID.id("E_ELEMENTS_UPDATED");
-	public static final int E_REMOVED_ELEMENT = StringID.id("E_REMOVED_ELEMENT");
-	public static final int E_REMOVED_ELEMENTS = StringID.id("E_REMOVED_ELEMENTS");
-	public static final int E_COLLECTION_CLEARED = StringID.id("E_COLLECTION_CLEARED");
+	public static final int EVENT_NEW_ELEMENT = StringID.id("EVENT_NEW_ELEMENT");
+	public static final int EVENT_NEW_ELEMENTS = StringID.id("EVENT_NEW_ELEMENTS");
+	public static final int EVENT_UPDATED_ELEMENT = StringID.id("EVENT_ELEMENT_UPDATED");
+	public static final int EVENT_UPDATED_ELEMENTS = StringID.id("EVENT_ELEMENTS_UPDATED");
+	public static final int EVENT_REMOVED_ELEMENT = StringID.id("EVENT_REMOVED_ELEMENT");
+	public static final int EVENT_REMOVED_ELEMENTS = StringID.id("EVENT_REMOVED_ELEMENTS");
+	public static final int EVENT_COLLECTION_CLEARED = StringID.id("EVENT_COLLECTION_CLEARED");
 
 }

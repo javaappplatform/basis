@@ -12,7 +12,7 @@ import java.util.Set;
  * Wrapper class for elements.
  * @author renken
  */
-public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableCollection<E>
+public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableSet<E>
 {
 
 	private final Set<E> container;
@@ -42,7 +42,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 	{
 		boolean added = this.container.add(data);
 		if (added)
-			this.postEvent(IObservableCollection.E_NEW_ELEMENT, data);
+			this.postEvent(IObservableCollection.EVENT_NEW_ELEMENT, data);
 		return added;
 	}
 
@@ -51,7 +51,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 	{
 		boolean removed = this.container.remove(data);
 		if (removed)
-			this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, data);
+			this.postEvent(IObservableCollection.EVENT_REMOVED_ELEMENT, data);
 		return removed;
 	}
 
@@ -76,7 +76,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 				added.add(e);
 		if (added.size() > 0)
 		{
-			this.postEvent(IObservableCollection.E_NEW_ELEMENTS, added);
+			this.postEvent(IObservableCollection.EVENT_NEW_ELEMENTS, added);
 			return true;
 		}
 		return false;
@@ -118,7 +118,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 				this.intern.remove();
 				E removed = this.last;
 				this.last = null;
-				ObservableSet.this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, removed);
+				ObservableSet.this.postEvent(IObservableCollection.EVENT_REMOVED_ELEMENT, removed);
 				
 			}
 		};
@@ -172,7 +172,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 				removed.add(e);
 		if (removed.size() > 0)
 		{
-			this.postEvent(IObservableCollection.E_REMOVED_ELEMENTS, removed);
+			this.postEvent(IObservableCollection.EVENT_REMOVED_ELEMENTS, removed);
 			return true;
 		}
 		return false;
@@ -187,7 +187,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 		if (this.container.size() > 0)
 		{
 			this.container.clear();
-			this.postEvent(IObservableCollection.E_COLLECTION_CLEARED);
+			this.postEvent(IObservableCollection.EVENT_COLLECTION_CLEARED);
 		}
 	}
 

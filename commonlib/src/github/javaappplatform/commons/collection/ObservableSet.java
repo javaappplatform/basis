@@ -40,7 +40,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 	@Override
 	public boolean add(E data)
 	{
-		boolean added = container.add(data);
+		boolean added = this.container.add(data);
 		if (added)
 			this.postEvent(IObservableCollection.E_NEW_ELEMENT, data);
 		return added;
@@ -49,7 +49,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 	@Override
 	public boolean remove(Object data)
 	{
-		boolean removed = container.remove(data);
+		boolean removed = this.container.remove(data);
 		if (removed)
 			this.postEvent(IObservableCollection.E_REMOVED_ELEMENT, data);
 		return removed;
@@ -96,7 +96,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 	{
 		return new Iterator<E>()
 		{
-			private Iterator<E> intern = container.iterator();
+			private Iterator<E> intern = ObservableSet.this.container.iterator();
 			private E last = null;
 
 			@Override
@@ -109,7 +109,7 @@ public class ObservableSet<E> extends TalkerStub implements Set<E>, IObservableC
 			public E next()
 			{
 				this.last = this.intern.next();
-				return last;
+				return this.last;
 			}
 
 			@Override

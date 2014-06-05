@@ -130,6 +130,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 
 				private Set<java.util.Map.Entry<K, V>> set = ObservableMap.this.container.entrySet();
 
+				@Override
 				public boolean remove(Object o)
 				{
 					if (this.set.remove(o))
@@ -203,6 +204,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 		{
 			private Set<K> internal = ObservableMap.this.container.keySet();
 			
+			@Override
 	        public Iterator<K> iterator()
 	        {
 	            return new Iterator<K>()
@@ -238,18 +240,22 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 					}
 				};
 	        }
+			@Override
 	        public int size()
 	        {
 	            return ObservableMap.this.size();
 	        }
+			@Override
 	        public boolean contains(Object o)
 	        {
 	            return ObservableMap.this.containsKey(o);
 	        }
+			@Override
 	        public boolean remove(Object o)
 	        {
 	        	return ObservableMap.this.remove(o) != null;
 	        }
+			@Override
 	        public void clear()
 	        {
 	            ObservableMap.this.clear();
@@ -298,6 +304,7 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 		{
 			private Set<Map.Entry<K, V>> internal = ObservableMap.this.entrySet();
 			
+			@Override
 	        public Iterator<V> iterator()
 	        {
 	            return new Iterator<V>()
@@ -330,18 +337,22 @@ public class ObservableMap<K, V> extends TalkerStub implements Map<K, V>
 					}
 				};
 	        }
+			@Override
 	        public int size()
 	        {
 	            return ObservableMap.this.size();
 	        }
+			@Override
 	        public boolean contains(Object o)
 	        {
 	            return ObservableMap.this.containsKey(o);
 	        }
+			@Override
 	        public boolean remove(Object o)
 	        {
 	        	return ObservableMap.this.remove(o) != null;
 	        }
+			@Override
 	        public void clear()
 	        {
 	            ObservableMap.this.clear();

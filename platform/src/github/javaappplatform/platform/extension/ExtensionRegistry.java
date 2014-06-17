@@ -365,6 +365,12 @@ public class ExtensionRegistry
 		{
 			for (Map.Entry<String, String> me : searchPattern.search.entrySet())
 			{
+				if ("extname".equals(me.getKey()))
+				{
+					if (!e.name.equals(me.getValue()))
+						return false;
+					continue;
+				}
 				Object value = e.properties.get(me.getKey());
 				if (value == null)
 					return false;

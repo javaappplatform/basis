@@ -101,7 +101,7 @@ public class Logger
 	{
 		this.logger.trace(msg, objects);
 		if (!this.assertsEnabled)
-			this.logger.warn("The 'trace' option of the logger should be used only with assertions.");
+			this.logger.trace("The 'trace' option of the logger should be used only with assertions.");
 		return true;
 	}
 

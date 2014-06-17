@@ -16,6 +16,7 @@ import github.javaappplatform.commons.util.Arrays2;
 import github.javaappplatform.commons.util.GenericsToolkit;
 import github.javaappplatform.platform.extension.Extension;
 import github.javaappplatform.platform.extension.ExtensionRegistry;
+import github.javaappplatform.platform.extension.ServiceInstantiationException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,9 +53,9 @@ import ch.qos.logback.core.util.StatusPrinter;
 public class LoggingTools
 {
 	
-	public static final String EP_ALIAS = "github.javaappplatform.platform.logging.Alias";
-	public static final String EP_LOGLEVEL = "github.javaappplatform.platform.logging.Level";
-	public static final String EP_LOGCONFIG = "github.javaappplatform.platform.logging.Config";
+	public static final String EXTPOINT_ALIAS = "github.javaappplatform.platform.logging.Alias";
+	public static final String EXTPOINT_LOGLEVEL = "github.javaappplatform.platform.logging.Level";
+	public static final String EXTPOINT_LOGCONFIG = "github.javaappplatform.platform.logging.Config";
 
 	private static final Logger LOGGER = Logger.getLogger();
 	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd'_'Hmmss");
@@ -62,7 +63,7 @@ public class LoggingTools
 
 	public static final void configureAliases()
 	{
-		Collection<Extension> set = ExtensionRegistry.getExtensions(EP_ALIAS);
+		Collection<Extension> set = ExtensionRegistry.getExtensions(EXTPOINT_ALIAS);
 		SmallMap<String, String> aliases = new SmallMap<String, String>(set.size());
 
 		for (Extension e : set)
@@ -73,7 +74,7 @@ public class LoggingTools
 
 	public static final void configureLevels()
 	{
-		Collection<Extension> set = ExtensionRegistry.getExtensions(EP_LOGLEVEL);
+		Collection<Extension> set = ExtensionRegistry.getExtensions(EXTPOINT_LOGLEVEL);
 		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 		for (Extension e : set)
 		{
@@ -86,15 +87,13 @@ public class LoggingTools
 
 	public static final void configureLogging()
 	{
-		Collection<Extension> exts = ExtensionRegistry.getExtensions(EP_LOGCONFIG);
-		if (exts.size() == 0)
+		Extension ext = ExtensionRegistry.getExtensionByName("logging.console.standard");
+		if (ext == null)
 		{
-			LOGGER.severe("Could not find a logging configuration. Default configuration is used.");
+			Logger.configureDefault();
+			LOGGER.severe("Could not find the standard logging configuration. Default configuration is used.");
 			return;
 		}
-		Extension ext = exts.iterator().next();
-		if (exts.size() > 1)
-			LOGGER.warn("Found several logging configurations. Will use " + ext.name);
 		configureLogging(ext);
 	}
 
@@ -103,11 +102,13 @@ public class LoggingTools
 		Extension e = ExtensionRegistry.getExtensionByName(logConfig);
 		if (e == null)
 		{
+			Logger.configureDefault();
 			LOGGER.severe("Could not find logging configuration {}. Default configuration is used.", logConfig);
 			return;
 		}
-		if (!Arrays2.contains(e.points, EP_LOGCONFIG))
+		if (!Arrays2.contains(e.points, EXTPOINT_LOGCONFIG))
 		{
+			Logger.configureDefault();
 			LOGGER.severe("Extension {} is not a logging configuration. Default configuration is used.", logConfig);
 			return;
 		}
@@ -127,16 +128,33 @@ public class LoggingTools
 			Encoder<ILoggingEvent> encoder = configureEncoder(ExtensionRegistry.getExtensionByName(extension.getProperty("encoder")), context);
 			encoder.setContext(context);
 			encoder.start();
-	
-			Appender<ILoggingEvent> appender = configureAppender(ExtensionRegistry.getExtensionByName(extension.getProperty("appender")), encoder);
-			appender.setContext(context);
-			appender.start();
-	
+
 			ch.qos.logback.classic.Logger rootLogger = context.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 			rootLogger.setLevel(Level.toLevel(extension.<String>getProperty("level"), Level.TRACE));
-			rootLogger.addAppender(appender);
+
+			String[] appenders;
+			String appender = extension.getProperty("appender", null);
+			if (appender != null)
+			{
+				appenders = new String[] { appender };
+			}
+			else
+			{
+				appenders = extension.getProperty("appenders", null);
+			}
+			if (appenders != null)
+			{
+				for (String apname : appenders)
+				{
+					Appender<ILoggingEvent> ap = configureAppender(ExtensionRegistry.getExtensionByName(apname), encoder);
+					ap.setContext(context);
+					ap.start();
+					rootLogger.addAppender(ap);
+				}
+			}
 			
 			StatusPrinter.printIfErrorsOccured(context);
+			configureLevels();
 		}
 		catch (Exception e)
 		{
@@ -151,7 +169,7 @@ public class LoggingTools
 	@SuppressWarnings("rawtypes")
 	private static final Appender<ILoggingEvent> configureAppender(Extension ext, Encoder<ILoggingEvent> encoder)
 	{
-		switch (ext.<String>getProperty("type"))
+		switch (ext.getProperty("type", "unknown"))
 		{
 			case "console":
 				ConsoleAppender<ILoggingEvent> ca = new ConsoleAppender<>();
@@ -209,7 +227,8 @@ public class LoggingTools
 						((TimeBasedRollingPolicy) rolling).setFileNamePattern(ext.getProperty("filepattern", "%d{yyyy-MM-dd}.%i.log.zip"));
 						if (flags == (F_TIME | F_SIZE | F_FILECOUNT))
 							((TimeBasedRollingPolicy) rolling).setMaxHistory(ext.getProperty("filecount", 10));
-						sizeandtime.start();
+//						rolling.start();
+//						sizeandtime.start();
 						break;
 					default:
 						throw new IllegalStateException();
@@ -234,8 +253,17 @@ public class LoggingTools
 				if (ext.hasProperty("suffixPattern"))
 					sa.setSuffixPattern(ext.getProperty("suffixPattern"));
 				return sa;
+			case "custom":
+				try
+				{
+					return ext.getService();
+				}
+				catch (ServiceInstantiationException e)
+				{
+					LOGGER.debug("Could not Instantiate Logging Appender.", e);
+				}
 			default:
-				throw new IllegalStateException();
+				throw new IllegalArgumentException("Could not instantiate appender from extension " + ext.name);
 		}
 	}
 	
@@ -255,7 +283,6 @@ public class LoggingTools
 				ClassRenamer.addRule("github.javaappplatform", "+[jap]");
 				ClassRenamer.addRule("github.javaappplatform.commons", "+[com]");
 				configureAliases();
-				configureLevels();
 				
 				PatternLayoutEncoder pl = new PatternLayoutEncoder();
 				if (!ext.getProperty("highlight", false))
@@ -266,6 +293,13 @@ public class LoggingTools
 			default:
 				throw new UnsupportedOperationException();
 		}
+	}
+	
+	public static final void configureDefault()
+	{
+		Logger.configureDefault();
+		configureAliases();
+		configureLevels();
 	}
 
 	public static final void closeLogger()

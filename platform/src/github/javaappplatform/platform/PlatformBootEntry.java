@@ -23,13 +23,10 @@ public class PlatformBootEntry implements IBootEntry
 	public void startup(Extension e) throws PlatformException
 	{
 		String logconfig = Platform.getOptionValue("logconfig");
-		if (logconfig == null)
-		{
-			LoggingTools.configureAliases();
-			LoggingTools.configureLevels();
-			return;
-		}
-		LoggingTools.configureLogging(logconfig);
+		if (logconfig != null)
+			LoggingTools.configureLogging(logconfig);
+		else
+			LoggingTools.configureDefault();
 	}
 
 	/**

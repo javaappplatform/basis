@@ -100,7 +100,7 @@ final class DoJobThread extends Thread
 	private final PriorityQueue<Entry> queue = new PriorityQueue<>(2);
 
 
-	private boolean isShutdown = false;
+	private volatile boolean isShutdown = false;
 
 
 	/**
@@ -141,7 +141,8 @@ final class DoJobThread extends Thread
 				this.add.clear();
 				this.queue.addAll(this.addQueue);
 				this.addQueue.clear();
-			} catch (InterruptedException e)
+			}
+			catch (InterruptedException e)
 			{
 				this.isShutdown = true;
 				this.pool.clear();
@@ -210,7 +211,15 @@ final class DoJobThread extends Thread
 								entry.job.doJob();
 								entry.time = Math.max(entry.time+entry.loop, ctime);
 								entry._decipher = Entry.DECIPHER++;
-								this.addQueue.add(entry);
+								this.addLock.lock();
+								try
+								{
+									this.addQueue.add(entry);
+								}
+								finally
+								{
+									this.addLock.unlock();
+								}
 							}
 							else
 								this.addJob(entry.job);
@@ -241,6 +250,12 @@ final class DoJobThread extends Thread
 				this.addLock.unlock();
 			}
 		}
+		for (IDoJob job : this.pool)
+			this._shutdownJob(job);
+		for (Entry entry : this.queue)
+			this._shutdownJob(entry.job);
+		this.pool.clear();
+		this.queue.clear();
 	}
 
 
@@ -341,12 +356,6 @@ final class DoJobThread extends Thread
 		try
 		{
 			this.isShutdown = true;
-			for (IDoJob job : this.pool)
-				this._shutdownJob(job);
-			for (Entry entry : this.queue)
-				this._shutdownJob(entry.job);
-			this.pool.clear();
-			this.queue.clear();
 			this.threadIsEmpty.signal();
 		}
 		finally

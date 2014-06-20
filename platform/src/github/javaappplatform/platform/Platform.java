@@ -200,7 +200,6 @@ public class Platform
 		}
 		catch (ParseException e)
 		{
-			System.out.println(e.getMessage());
 			ModHelpFormatter formatter = new ModHelpFormatter();
 			formatter.printHelp("Platform", OptionTools.getOptions(), true);
 			throw new PlatformException(e);

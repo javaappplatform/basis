@@ -176,13 +176,6 @@ public class Platform
 		if (configpath != null)
 			args = ConfigFileTools.read(configpath);
 
-		if (Arrays2.indexOf(args, "-help") != -1)
-		{
-			ModHelpFormatter formatter = new ModHelpFormatter();
-			formatter.printHelp("Platform", OptionTools.getOptions(), true);
-			throw new PlatformException();
-		}
-
 		ExtensionLoader.loadExtensionsFromArgs(args);
 
 		try
@@ -213,9 +206,6 @@ public class Platform
 
 	public static final void shutdown(final int millis)
 	{
-		if (STATE != State.RUNNING)
-			return;
-
 		JobPlatform.shutdown();
 
 		Thread monitor = null;
@@ -274,12 +264,22 @@ public class Platform
 	{
 		try
 		{
+			if (Arrays2.indexOf(args, "-help") != -1)
+			{
+				ModHelpFormatter formatter = new ModHelpFormatter();
+				formatter.printHelp("Platform", OptionTools.getOptions(), true);
+				shutdown();
+				return;
+			}
+
+
 			parseOptions(args);
 			try
 			{
 				boot();
 				JobPlatform.waitForShutdown();
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				LOGGER.severe("Exception catched. Doing a hard shutdown. ", e);
 				shutdown();
@@ -292,6 +292,7 @@ public class Platform
 		catch (IOException e1)
 		{
 			LOGGER.severe("Exception catched. Doing a hard shutdown. ", e1);
+			shutdown();
 		}
 	}
 

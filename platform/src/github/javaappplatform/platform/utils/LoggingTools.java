@@ -285,10 +285,12 @@ public class LoggingTools
 				configureAliases();
 				
 				PatternLayoutEncoder pl = new PatternLayoutEncoder();
-				if (!ext.getProperty("highlight", false))
-					pl.setPattern("%-5level %-20([%thread]) %-36alias{36} - %msg%n");
+				if (ext.hasProperty("pattern"))
+					pl.setPattern(ext.getProperty("pattern"));
+				else if (!ext.getProperty("highlight", false))
+					pl.setPattern("%date{HH:mm:ss} %-5level %-20([%thread]) %-36alias{36} - %msg%n");
 				else
-					pl.setPattern("%highlight(%-5level) %red(%-20([%thread])) %cyan(%-36alias{36}) %red(- %msg) %n");
+					pl.setPattern("%date{HH:mm:ss} %highlight(%-5level) %red(%-20([%thread])) %cyan(%-36alias{36}) %red(- %msg) %n");
 				return pl;
 			default:
 				throw new UnsupportedOperationException();

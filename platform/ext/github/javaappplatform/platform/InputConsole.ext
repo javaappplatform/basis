@@ -64,6 +64,16 @@
 		"command" : "extensions",
 		"sync" : false,
 		"description" : "Shows all registered extensions."
+	},
+
+	"github.javaappplatform.platform.console.LoggingCommand" :
+	{
+		"point" : "github.javaappplatform.platform.console.Command",
+		"class" : "github.javaappplatform.platform.console.LoggingCommand",
+		"singleton" : true,
+		"command" : "logging",
+		"sync" : false,
+		"description" : "Usage: 'logging level of <package> set to {TRACE | DEBUG | INFO | WARN | ERROR}'. Sets the logging level of the given package to the given level."
 	}
 
 }

@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="demos"/>
 	<classpathentry kind="src" path="ext"/>
 	<classpathentry kind="src" path="apache"/>
+	<classpathentry kind="src" path="starter"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/commonlib"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.2.jar" sourcepath="lib/commons-cli-1.2-src.zip"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

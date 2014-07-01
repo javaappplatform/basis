@@ -357,6 +357,7 @@ final class DoJobThread extends Thread
 		{
 			this.isShutdown = true;
 			this.threadIsEmpty.signal();
+			this.interrupt();
 		}
 		finally
 		{

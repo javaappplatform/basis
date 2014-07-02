@@ -1,0 +1,71 @@
+/*
+	This file is part of the java application platform library.
+	Copyright (C) 2011-2012 Hendrik Renken
+
+	This library is subject to the terms of the Mozilla Public License, v. 2.0.
+	You should have received a copy of the MPL along with this library; see the
+	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+{
+
+	"github.javaappplatform.platform.console.HelpCommand" :
+	{
+		"point" : "github.javaappplatform.platform.console.Command",
+		"class" : "github.javaappplatform.platform.console.HelpCommand",
+		"singleton" : true,
+		"command" : "help",
+		"sync" : false,
+		"description" : "Lists all available commands. 'help <command>' shows a detailed description for the specified command."
+	},
+
+	"github.javaappplatform.platform.console.ShutdownCommand" :
+	{
+		"point" : "github.javaappplatform.platform.console.Command",
+		"class" : "github.javaappplatform.platform.console.ShutdownCommand",
+		"singleton" : true,
+		"command" : "shutdown",
+		"sync" : false,
+		"description" : "Initiates the shutdown of the platform."
+	},
+
+	"github.javaappplatform.platform.console.CloseCommand" :
+	{
+		"point" : "github.javaappplatform.platform.console.Command",
+		"class" : "github.javaappplatform.platform.console.ShutdownCommand",
+		"singleton" : true,
+		"command" : "close",
+		"sync" : false,
+		"description" : "Initiates the shutdown of the platform."
+	},
+
+	"github.javaappplatform.platform.console.JobCommand" :
+	{
+		"point" : "github.javaappplatform.platform.console.Command",
+		"class" : "github.javaappplatform.platform.console.JobCommand",
+		"singleton" : true,
+		"command" : "job",
+		"sync" : false,
+		"description" : "Shows all currently running jobs."
+	},
+
+	"github.javaappplatform.platform.console.ExtensionCommand" :
+	{
+		"point" : "github.javaappplatform.platform.console.Command",
+		"class" : "github.javaappplatform.platform.console.ExtensionCommand",
+		"singleton" : true,
+		"command" : "extensions",
+		"sync" : false,
+		"description" : "Shows all registered extensions."
+	},
+
+	"github.javaappplatform.platform.console.LoggingCommand" :
+	{
+		"point" : "github.javaappplatform.platform.console.Command",
+		"class" : "github.javaappplatform.platform.console.LoggingCommand",
+		"singleton" : true,
+		"command" : "logging",
+		"sync" : false,
+		"description" : "Usage: 'logging level of <package> set to {TRACE | DEBUG | INFO | WARN | ERROR}'. Sets the logging level of the given package to the given level."
+	}
+
+}

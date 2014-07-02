@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class JobPlatform
 {
 
-	public static final String MAIN_THREAD = "JAP Main Thread";
+	public static final String MAIN_THREAD = "platform_main";
 
 
 	private static final Logger LOGGER = Logger.getLogger();

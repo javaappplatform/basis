@@ -7,17 +7,26 @@ subprojects
 	{
 		main {
 			java { srcDirs 'src', 'apache' }
-			resources { srcDirs 'ext' }
+			resources { srcDirs 'res', 'ext' }
 			output.classesDir = "${project.buildDir}/bin/src"
 			output.resourcesDir = "${project.buildDir}/bin/res"
 		}
 	}
-	libsDirName = "${project.buildDir}/output/libs"
+
+	libsDirName = "${project.buildDir}/libs"
 	dependencies
 	{
 		compile project.fileTree(dir: 'lib', include: '*.jar')
 	}
-	jar.manifest.attributes('Implementation-Vendor': 'Java App Platform', 'Implementation-Version': version, 'Implementation-Title': '${project.name}')
+	jar
+	{
+		manifest
+		{
+			attributes('Implementation-Vendor': 'Java App Platform', 'Implementation-Version': '${project.version}', 'Implementation-Title': '${project.name}')
+		}
+		baseName = 'jap'
+		appendix = project.name
+	}
 
         project.uploadArchives.repositories
         {
@@ -25,5 +34,13 @@ subprojects
                         dir rootProject.file('repo')
                 }
         }
-
+	project.tasks.create(name: 'cpsrc', type: Copy)
+	{
+		from(sourceSets.main.java.srcDirs)
+		{
+			include '**/*.java'
+		}
+		into "${project.buildDir}/bin/res"
+	}
+	project.tasks.jar.dependsOn(project.tasks.cpsrc)
 }

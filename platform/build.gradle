@@ -1,4 +1,37 @@
-dependencies
-{
+dependencies {
 	compile project(':commonlib')
+}
+
+sourceSets {
+	starter {
+		java { srcDirs 'starter' }
+		output.classesDir = "${project.buildDir}/starter/src"
+		output.resourcesDir = "${project.buildDir}/starter/res"
+		compileClasspath += main.output
+        runtimeClasspath += main.output
+	}
+}
+
+task starterJar(type: Jar) {
+	from sourceSets.starter.output
+	manifest {
+		attributes('Implementation-Vendor': 'Java App Platform', 'Implementation-Version': '${project.version}', 'Implementation-Title': 'jap starter')
+	}
+	baseName = 'jap'
+	appendix = 'starter'
+}
+task starterCpsrc(type: Copy) {
+	from(sourceSets.starter.java.srcDirs) {
+		include '**/*.java'
+	}
+	into sourceSets.starter.output.resourcesDir
+}
+project.tasks.starterJar.dependsOn(project.tasks.starterCpsrc)
+        
+configurations {
+    starter
+}
+
+artifacts {
+    starter starterJar
 }

@@ -47,7 +47,7 @@ public class HelpCommand implements ICommand
 		else
 		{
 			Extension cmd = ExtensionRegistry.getExtension(ICommand.EXT_POINT, "command="+args[0]);
-			out.println(cmd.getProperty("description"));
+			out.println(cmd.<String>getProperty("description"));
 		}
 
 	}

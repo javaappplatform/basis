@@ -289,6 +289,27 @@ public class SemiDynamicByteArray
 		return dest;
 	}
 
+	public byte[] datacopy(int sourcePosition, byte[] dest, int destPosition, int length)
+	{
+		this.cursor(sourcePosition);
+		
+		if (this.cursor+length > this.size)
+			throw new IllegalArgumentException("Requested position ["+this.cursor+"] + length ["+length+"] >= size of this array ["+this.size+"]");
+
+		int i = this.current;
+		int toCopy = Math.min(this.list.get(i).length-this.pointer, length);
+		System.arraycopy(this.list.get(i), this.pointer, dest, destPosition, toCopy);
+		int pos = toCopy;
+		while (pos < length)
+		{
+			i++;
+			toCopy = Math.min(this.list.get(i).length, length - pos);
+			System.arraycopy(this.list.get(i), 0, dest, destPosition + pos, toCopy);
+			pos += toCopy;
+		}
+		return dest;
+	}
+
 	public byte[] getData()
 	{
 		byte[] arr = new byte[this.size];

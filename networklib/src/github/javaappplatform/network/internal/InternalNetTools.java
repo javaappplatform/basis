@@ -195,7 +195,7 @@ public class InternalNetTools
 		{
 			if (msg.body2().size() > INetworkAPI.MAX_UDP_PAKET_SIZE-InternalMessageAPI.LENGTH_UDP_HEADER)
 				throw new IOException("Message size too big for UDP protocol.");
-			msg.body2().getData(buffer, InternalMessageAPI.OFFSET_UDP_BODY, msg.body2().size());
+			msg.body2().datacopy(InternalMessageAPI.OFFSET_UDP_BODY, buffer, 0, msg.body2().size());
 		}
 	}
 

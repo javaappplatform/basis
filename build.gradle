@@ -1,0 +1,29 @@
+subprojects
+{
+	apply plugin: 'java'
+	sourceCompatibility = 1.8
+	group = "github.javaappplatform"
+	sourceSets
+	{
+		main {
+			java { srcDirs 'src', 'apache' }
+			resources { srcDirs 'ext' }
+			output.classesDir = "${project.buildDir}/bin/src"
+			output.resourcesDir = "${project.buildDir}/bin/res"
+		}
+	}
+	libsDirName = "${project.buildDir}/output/libs"
+	dependencies
+	{
+		compile project.fileTree(dir: 'lib', include: '*.jar')
+	}
+	jar.manifest.attributes('Implementation-Vendor': 'Java App Platform', 'Implementation-Version': version, 'Implementation-Title': '${project.name}')
+
+        project.uploadArchives.repositories
+        {
+                flatDir {
+                        dir rootProject.file('repo')
+                }
+        }
+
+}

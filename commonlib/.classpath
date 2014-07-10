@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="demos"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="/Users/renken/Documents/workspaces/git_repos/jap/commonlib/lib/logback-classic-1.1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/renken/Documents/workspaces/git_repos/jap/commonlib/lib/logback-core-1.1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/renken/Documents/workspaces/git_repos/jap/commonlib/lib/slf4j-api-1.7.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/renken/Documents/workspaces/git_repos/jap/commonlib/lib/trove-3.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/renken/Documents/workspaces/git_repos/jap/commonlib/lib/logback-classic-1.1.2.jar" sourcepath="lib/logback-classic-1.1.2-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="/Users/renken/Documents/workspaces/git_repos/jap/commonlib/lib/logback-core-1.1.2.jar" sourcepath="lib/logback-core-1.1.2-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="/Users/renken/Documents/workspaces/git_repos/jap/commonlib/lib/slf4j-api-1.7.7.jar" sourcepath="lib/slf4j-api-1.7.7-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="/Users/renken/Documents/workspaces/git_repos/jap/commonlib/lib/trove-3.0.3.jar" sourcepath="lib/trove-3.0.3-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jackson-core-2.4.1.1.jar" sourcepath="lib/jackson-core-2.4.1.1-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

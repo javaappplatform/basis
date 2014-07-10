@@ -1,5 +1,5 @@
-dependencies {
-	compile project(':commonlib')
+configurations {
+    starter
 }
 
 sourceSets {
@@ -7,30 +7,35 @@ sourceSets {
 		java { srcDirs 'starter' }
 		output.classesDir = "${project.buildDir}/starter/src"
 		output.resourcesDir = "${project.buildDir}/starter/res"
-		compileClasspath += main.output
-        runtimeClasspath += main.output
+		compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
 	}
 }
 
-task starterJar(type: Jar) {
-	from sourceSets.starter.output
-	manifest {
-		attributes('Implementation-Vendor': 'Java App Platform', 'Implementation-Version': '${project.version}', 'Implementation-Title': 'jap starter')
-	}
-	baseName = 'jap'
-	appendix = 'starter'
+dependencies {
+	compile project(':commonlib')
+	starterCompile project(':commonlib')
+	starterCompile project.fileTree(dir: 'lib', include: '*.jar')
 }
+
 task starterCpsrc(type: Copy) {
 	from(sourceSets.starter.java.srcDirs) {
 		include '**/*.java'
 	}
 	into sourceSets.starter.output.resourcesDir
 }
-project.tasks.starterJar.dependsOn(project.tasks.starterCpsrc)
-        
-configurations {
-    starter
+task starterJar(type: Jar) {
+	dependsOn starterCpsrc
+	from sourceSets.starter.output
+	manifest {
+		attributes('Implementation-Vendor': 'Java App Platform', 'Implementation-Version': '${project.version}', 'Implementation-Title': 'jap starter')
+	}
+	baseName = 'jap'
+	appendix = 'starter'
+	includeEmptyDirs = false
 }
+
+project.jar.dependsOn(project.tasks.starterJar)
 
 artifacts {
     starter starterJar

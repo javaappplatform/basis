@@ -38,5 +38,14 @@ task starterJar(type: Jar) {
 project.jar.dependsOn(project.tasks.starterJar)
 
 artifacts {
-    archives starterJar
+    starter starterJar
+}
+
+uploadStarter {
+	repositories {
+		def repoURL = 'file:' + rootProject.file('repo')           
+		mavenDeployer {
+			repository(url: repoURL)
+		}
+	}
 }

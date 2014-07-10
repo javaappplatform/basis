@@ -38,5 +38,5 @@ task starterJar(type: Jar) {
 project.jar.dependsOn(project.tasks.starterJar)
 
 artifacts {
-    starter starterJar
+    archives starterJar
 }

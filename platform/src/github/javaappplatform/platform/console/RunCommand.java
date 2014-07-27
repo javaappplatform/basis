@@ -80,7 +80,7 @@ public class RunCommand
 		// run command
 		if (cmde.<Boolean>getProperty("sync").booleanValue())
 		{
-			JobPlatform.runJob(new Runnable()
+			JobPlatform.runJob("Execute Command "+this.name, new Runnable()
 			{
 
 				@Override

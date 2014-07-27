@@ -27,7 +27,7 @@ public class ShutdownCommand implements ICommand
 	public void run(String[] args, PrintStream out)
 	{
 		out.println("Shutting down. Have a nice day!");
-		JobPlatform.runJob(new Runnable()
+		JobPlatform.runJob("Shutdown Runnable", new Runnable()
 		{
 			
 			@Override

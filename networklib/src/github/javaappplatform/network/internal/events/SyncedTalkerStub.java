@@ -10,6 +10,7 @@
 package github.javaappplatform.network.internal.events;
 
 import github.javaappplatform.commons.events.IListener;
+import github.javaappplatform.commons.events.IListenerSet;
 import github.javaappplatform.commons.events.TalkerStub;
 
 
@@ -22,12 +23,22 @@ public class SyncedTalkerStub extends TalkerStub
 
 	protected SyncedTalkerStub()
 	{
-		super();
+		this((Class<IListenerSet>) null);
 	}
 
+	protected SyncedTalkerStub(Class<IListenerSet> setImpl)
+	{
+		super(setImpl);
+	}
+	
 	public SyncedTalkerStub(Object source)
 	{
-		super(source);
+		this(source, null);
+	}
+
+	public SyncedTalkerStub(Object source, Class<IListenerSet> setImpl)
+	{
+		super(source, setImpl);
 	}
 
 

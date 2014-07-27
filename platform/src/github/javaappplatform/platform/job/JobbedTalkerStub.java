@@ -10,7 +10,9 @@
 package github.javaappplatform.platform.job;
 
 import github.javaappplatform.commons.events.IListener;
+import github.javaappplatform.commons.events.IListenerSet;
 import github.javaappplatform.commons.events.TalkerStub;
+import github.javaappplatform.commons.util.StringID;
 
 /**
  * TODO javadoc
@@ -24,12 +26,23 @@ public class JobbedTalkerStub extends TalkerStub
 
 	protected JobbedTalkerStub(String thread)
 	{
-		this.thread = thread;
+		this(thread, (Class<IListenerSet>) null);
 	}
 
+	protected JobbedTalkerStub(String thread, Class<IListenerSet> setImpl)
+	{
+		super(setImpl);
+		this.thread = thread;
+	}
+	
 	protected JobbedTalkerStub(Object source, String thread)
 	{
-		super(source);
+		this(source, thread, null);
+	}
+
+	protected JobbedTalkerStub(Object source, String thread, Class<IListenerSet> setImpl)
+	{
+		super(source, setImpl);
 		this.thread = thread;
 	}
 
@@ -45,7 +58,7 @@ public class JobbedTalkerStub extends TalkerStub
 	@Override
 	public void addListener(final int type, final IListener listener, final int priority)
 	{
-		JobPlatform.runJob(new Runnable()
+		JobPlatform.runJob("addListener "+listener.toString(), new Runnable()
 		{
 			
 			@Override
@@ -98,7 +111,7 @@ public class JobbedTalkerStub extends TalkerStub
 	@Override
 	public void removeListener(final int type, final IListener listener)
 	{
-		JobPlatform.runJob(new Runnable()
+		JobPlatform.runJob("removeListener "+listener, new Runnable()
 		{
 			
 			@Override
@@ -121,7 +134,7 @@ public class JobbedTalkerStub extends TalkerStub
 	@Override
 	public void removeListener(final IListener listener)
 	{
-		JobPlatform.runJob(new Runnable()
+		JobPlatform.runJob("removeListener "+listener, new Runnable()
 		{
 			
 			@Override
@@ -143,7 +156,7 @@ public class JobbedTalkerStub extends TalkerStub
 	@Override
 	public void postEvent(final int type, final Object... data)
 	{
-		JobPlatform.runJob(new Runnable()
+		JobPlatform.runJob("post Event "+StringID.id(type), new Runnable()
 		{
 			
 			@Override
@@ -165,7 +178,7 @@ public class JobbedTalkerStub extends TalkerStub
 	@Override
 	public void clear()
 	{
-		JobPlatform.runJob(new Runnable()
+		JobPlatform.runJob("clear Stub "+this, new Runnable()
 		{
 			
 			@Override

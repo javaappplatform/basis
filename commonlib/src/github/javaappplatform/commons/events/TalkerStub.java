@@ -47,18 +47,31 @@ public class TalkerStub implements ITalker, ITalker.Inner
 	}
 
 
+	private final Class<IListenerSet> setImpl;
 	protected final Object source;
 	protected IListenerSet[] sets;
 
 
 	protected TalkerStub()
 	{
+		this((Class<IListenerSet>) null);
+	}
+
+	protected TalkerStub(Class<IListenerSet> setImpl)
+	{
 		this.source = this;
+		this.setImpl = setImpl;
 	}
 
 	public TalkerStub(Object source)
 	{
+		this(source, null);
+	}
+
+	public TalkerStub(Object source, Class<IListenerSet> setImpl)
+	{
 		this.source = source;
+		this.setImpl = setImpl;
 	}
 
 
@@ -74,7 +87,7 @@ public class TalkerStub implements ITalker, ITalker.Inner
 			if (set != null && set != this.sets[priority])
 				set.unhook(type, listener);
 		if (this.sets[priority] == null)
-			this.sets[priority] = new ListenerSet();
+			this.sets[priority] = this.newSet();
 		this.sets[priority].hookUp(type, listener);
 	}
 
@@ -156,4 +169,17 @@ public class TalkerStub implements ITalker, ITalker.Inner
 		this.sets = null;
 	}
 
+	private IListenerSet newSet()
+	{
+		if (this.setImpl == null)
+			return new ListenerSet();
+		try
+		{
+			return this.setImpl.newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 }

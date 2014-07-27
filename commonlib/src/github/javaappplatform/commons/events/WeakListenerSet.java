@@ -9,6 +9,8 @@
 */
 package github.javaappplatform.commons.events;
 
+import java.lang.ref.WeakReference;
+
 import gnu.trove.procedure.TIntObjectProcedure;
 
 /**
@@ -22,7 +24,7 @@ import gnu.trove.procedure.TIntObjectProcedure;
  *
  * @author funsheep
  */
-public class ListenerSet implements IListenerSet
+public class WeakListenerSet implements IListenerSet
 {
 
 //	private static final Logger LOGGER = Logger.getLogger();
@@ -32,7 +34,7 @@ public class ListenerSet implements IListenerSet
 	protected int size = 0;
 	protected int _last_valid_index = -1;
 	private int[] types;
-	private IListener[] listeners;
+	private WeakReference<IListener>[] listeners;
 
 
 	/**
@@ -53,8 +55,11 @@ public class ListenerSet implements IListenerSet
 		this.cleanup();
 
 		int i = 0;
-		while (i < this.size && func.execute(this.types[i], this.listeners[i]))
+		while (i < this.size)
 		{
+			IListener lis = this.listeners[i].get();
+			if (lis != null && !func.execute(this.types[i], lis))
+				break;
 			i++;
 		}
 	}
@@ -75,6 +80,7 @@ public class ListenerSet implements IListenerSet
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void hookUp(int type, IListener listener)
 	{
@@ -89,7 +95,7 @@ public class ListenerSet implements IListenerSet
 				i++;
 
 			this.types[i] = type;
-			this.listeners[i] = listener;
+			this.listeners[i] = new WeakReference<>(listener);
 			this.size++;
 			return;
 		}
@@ -97,11 +103,11 @@ public class ListenerSet implements IListenerSet
 		if (this.types == null)
 		{
 			this.types = new int[GROW_SIZE];
-			this.listeners = new IListener[GROW_SIZE];
+			this.listeners = new WeakReference[GROW_SIZE];
 		} else if (this.size == this.types.length)
 		{
 			final int[] newtypes = new int[this.size + GROW_SIZE];
-			final IListener[] newlisteners = new IListener[this.size + GROW_SIZE];
+			final WeakReference<IListener>[] newlisteners = new WeakReference[this.size + GROW_SIZE];
 
 			System.arraycopy(this.types, 0, newtypes, 0, this.size);
 			System.arraycopy(this.listeners, 0, newlisteners, 0, this.size);
@@ -111,7 +117,7 @@ public class ListenerSet implements IListenerSet
 
 		}
 		this.types[this.size] = type;
-		this.listeners[this.size] = listener;
+		this.listeners[this.size] = new WeakReference<>(listener);
 		this._last_valid_index = this.size;
 		this.size++;
 	}
@@ -165,9 +171,9 @@ public class ListenerSet implements IListenerSet
 		int k = this._last_valid_index;
 		while (i < k)
 		{
-			if (this.listeners[i] == null)
+			if (this.listeners[i] == null || this.listeners[i].get() == null)
 			{
-				while (k > i && this.listeners[k] == null)
+				while (k > i && this.listeners[k] == null || this.listeners[k].get() == null)
 				{
 					k--;
 				}
@@ -185,7 +191,8 @@ public class ListenerSet implements IListenerSet
 		if (this.size > 0 && this.size+2 < this.types.length / 2)
 		{
 			final int[] newtypes = new int[this.size+2];
-			final IListener[] newlisteners = new IListener[this.size+2];
+			@SuppressWarnings("unchecked")
+			final WeakReference<IListener>[] newlisteners = new WeakReference[this.size+2];
 
 			System.arraycopy(this.types, 0, newtypes, 0, this.size);
 			System.arraycopy(this.listeners, 0, newlisteners, 0, this.size);

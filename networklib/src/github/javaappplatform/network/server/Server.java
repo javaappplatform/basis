@@ -10,12 +10,12 @@ package github.javaappplatform.network.server;
 
 import github.javaappplatform.commons.collection.SmallSet;
 import github.javaappplatform.commons.events.Event;
-import github.javaappplatform.commons.events.SyncedTalkerStub;
 import github.javaappplatform.commons.util.Close;
 import github.javaappplatform.network.INetworkAPI;
 import github.javaappplatform.network.internal.IInternalServer;
 import github.javaappplatform.network.internal.IInternalServerUnit;
 import github.javaappplatform.network.internal.InternalNetTools;
+import github.javaappplatform.network.internal.events.SyncedTalkerStub;
 import gnu.trove.iterator.TIntLongIterator;
 import gnu.trove.map.TIntLongMap;
 import gnu.trove.map.hash.TIntLongHashMap;

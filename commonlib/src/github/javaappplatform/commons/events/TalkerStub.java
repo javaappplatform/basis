@@ -19,7 +19,7 @@ import gnu.trove.procedure.TIntObjectProcedure;
  *
  * @author funsheep
  */
-public class TalkerStub implements ITalker, IInnerTalker
+public class TalkerStub implements ITalker, ITalker.Inner
 {
 
 
@@ -48,7 +48,7 @@ public class TalkerStub implements ITalker, IInnerTalker
 
 
 	protected final Object source;
-	protected ListenerSet[] sets;
+	protected IListenerSet[] sets;
 
 
 	protected TalkerStub()
@@ -69,8 +69,8 @@ public class TalkerStub implements ITalker, IInnerTalker
 	public void addListener(int type, IListener listener, int priority)
 	{
 		if (this.sets == null)
-			this.sets = new ListenerSet[3];
-		for (ListenerSet set : this.sets)
+			this.sets = new IListenerSet[3];
+		for (IListenerSet set : this.sets)
 			if (set != null && set != this.sets[priority])
 				set.unhook(type, listener);
 		if (this.sets[priority] == null)
@@ -86,7 +86,7 @@ public class TalkerStub implements ITalker, IInnerTalker
 	{
 		if (this.sets != null)
 		{
-			for (ListenerSet set : this.sets)
+			for (IListenerSet set : this.sets)
 				if (set != null && set.hasHooks(type))
 					return true;
 		}
@@ -101,7 +101,7 @@ public class TalkerStub implements ITalker, IInnerTalker
 	{
 		if (this.sets == null)
 			return;
-		for (ListenerSet set : this.sets)
+		for (IListenerSet set : this.sets)
 			if (set != null)
 				set.unhook(type, listener);
 	}
@@ -114,7 +114,7 @@ public class TalkerStub implements ITalker, IInnerTalker
 	{
 		if (this.sets == null)
 			return;
-		for (ListenerSet set : this.sets)
+		for (IListenerSet set : this.sets)
 			if (set != null)
 				set.unhook(listener);
 	}
@@ -142,7 +142,7 @@ public class TalkerStub implements ITalker, IInnerTalker
 		else if (data != null && data.length > 0)
 			event.setData(data);
 
-		for (ListenerSet set : this.sets)
+		for (IListenerSet set : this.sets)
 			if (set != null && set.size() > 0)
 				set.foreachEntry(new PostEventFunc(event));
 	}

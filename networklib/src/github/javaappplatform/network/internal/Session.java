@@ -10,11 +10,11 @@ package github.javaappplatform.network.internal;
 
 import github.javaappplatform.commons.collection.SemiDynamicByteArray;
 import github.javaappplatform.commons.events.IListener;
-import github.javaappplatform.commons.events.SyncedTalkerStub;
 import github.javaappplatform.commons.log.Logger;
 import github.javaappplatform.commons.util.Close;
 import github.javaappplatform.network.IClientUnit;
 import github.javaappplatform.network.INetworkAPI;
+import github.javaappplatform.network.internal.events.SyncedTalkerStub;
 import github.javaappplatform.network.msg.IMessage;
 
 import java.io.IOException;

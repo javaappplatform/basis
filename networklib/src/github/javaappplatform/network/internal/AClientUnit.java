@@ -9,12 +9,12 @@
 package github.javaappplatform.network.internal;
 
 import github.javaappplatform.commons.events.Event;
-import github.javaappplatform.commons.events.SyncedTalkerStub;
 import github.javaappplatform.commons.log.Logger;
 import github.javaappplatform.commons.util.Close;
 import github.javaappplatform.network.IClientUnit;
 import github.javaappplatform.network.INetworkAPI;
 import github.javaappplatform.network.ISession;
+import github.javaappplatform.network.internal.events.SyncedTalkerStub;
 import github.javaappplatform.network.msg.Converter;
 import github.javaappplatform.network.msg.MessageReader;
 import gnu.trove.map.TIntObjectMap;

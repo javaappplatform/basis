@@ -64,4 +64,32 @@ public interface ITalker
 	 */
 	public void removeListener(int type, IListener listener);
 
+	
+	public interface Inner extends ITalker
+	{
+		/**
+		 * Creates a new event from the given information. The source is set to the
+		 * in the constructor given source object. The event is then posted to all
+		 * listeners, listening to the event type. The data field of the event is set
+		 * to <code>null</code>.
+		 * @param type The type of the event.
+		 */
+		public void postEvent(int type);
+
+		/**
+		 * Creates a new event from the given information. The source is set to the
+		 * in the constructor given source object. The event is then posted to all
+		 * listeners, listening to the event type.
+		 * @param type The type of the event.
+		 * @param data The data field.
+		 */
+		public void postEvent(int type, Object... data);
+
+		/**
+		 * Clears the stub. All listeners are removed.
+		 */
+		public void clear();
+
+	}
+
 }

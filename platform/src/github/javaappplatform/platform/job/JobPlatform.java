@@ -127,9 +127,18 @@ public class JobPlatform
 		}
 	}
 
+	/**
+	 * @deprecated Please use {@link #runJob(String, Runnable, String)} instead.
+	 */
+	@Deprecated 
 	public static IJob runJob(final Runnable run, String thread)
 	{
-		IDoJob job = new RunnableJob(run);
+		return runJob(run.toString(), run, thread);
+	}
+
+	public static IJob runJob(String name, final Runnable run, String thread)
+	{
+		IDoJob job = new RunnableJob(name, run);
 		runJob(job, thread);
 		return job;
 	}

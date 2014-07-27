@@ -20,9 +20,9 @@ final class RunnableJob extends ADoJob implements IDoJob
 	private final Runnable run;
 
 
-	public RunnableJob(Runnable run)
+	public RunnableJob(String name, Runnable run)
 	{
-		super(run.toString());
+		super(name);
 		this.run = run;
 	}
 

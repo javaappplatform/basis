@@ -53,7 +53,8 @@ public class ListenerSet implements IListenerSet
 		this.cleanup();
 
 		int i = 0;
-		while (i < this._last_valid_index && (this.listeners[i] == null || func.execute(this.types[i], this.listeners[i])))
+		final int size = this.size();
+		while (i < size && (this.listeners[i] == null || func.execute(this.types[i], this.listeners[i])))
 		{
 			i++;
 		}

@@ -55,7 +55,7 @@ public class WeakListenerSet implements IListenerSet
 		this.cleanup();
 
 		int i = 0;
-		while (i < this.size)
+		while (i < this._last_valid_index)
 		{
 			IListener lis = this.listeners[i].get();
 			if (lis != null && !func.execute(this.types[i], lis))
